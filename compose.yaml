@@ -3,9 +3,10 @@ services:
     build: .
     restart: unless-stopped
     environment:
-      # Coolify generates the domain for this service; override it in the
-      # Coolify UI (Domains) or by setting SERVICE_FQDN_APP in Environment Variables.
-      - SERVICE_FQDN_APP
-      - PORT=${PORT:-8080}
+      # The _9203 suffix tells Coolify (Traefik) which container port to route
+      # the generated domain to. Keep it in sync with PORT and expose below.
+      # Override the domain in the Coolify UI (Domains) if needed.
+      - SERVICE_FQDN_APP_9203
+      - PORT=9203
     expose:
-      - "${PORT:-8080}"
+      - "9203"
