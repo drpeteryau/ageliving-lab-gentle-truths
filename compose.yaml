@@ -1,6 +1,10 @@
+# Reached through a Cloudflare Tunnel pointing at http://127.0.0.1:${PORT} on the
+# Docker host, so the port is published on loopback only. No domain is set in Coolify.
 services:
   app:
     build: .
     restart: unless-stopped
     environment:
-      - PORT=${PORT:-8080}
+      - PORT=${PORT:?set PORT}
+    ports:
+      - "127.0.0.1:${PORT}:${PORT}"
