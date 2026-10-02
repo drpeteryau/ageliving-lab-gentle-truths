@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      # Coolify generates the domain for this service; override it in the
+      # Coolify UI (Domains) or by setting SERVICE_FQDN_APP in Environment Variables.
+      - SERVICE_FQDN_APP
+      - PORT=${PORT:-8080}
+    expose:
+      - "${PORT:-8080}"
