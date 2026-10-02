@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gentle Truths: serious illness conversation studio</title>
+<meta name="description" content="A scripted, multilingual simulator for practising serious illness conversations in nursing education. Concept prototype; all cases are fictional.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Schibsted+Grotesk:wght@400;500;600;700&family=Noto+Serif+TC:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+Tamil:wght@400;600&family=Noto+Sans+Tamil:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+  --bg:#EEF3F4; --surface:#FFFFFF; --surface2:#E2EAEC; --ink:#10252D; --ink2:#485F68; --line:#C8D5D9;
+  --amber:#F0A92E; --amber-ink:#1B1406;
+  --trust:#1B8A7D; --understand:#3B78C2; --tension:#D03F58;
+  --shadow:0 1px 2px rgba(16,37,45,.07),0 10px 28px rgba(16,37,45,.06);
+  --serif:"Newsreader","Noto Serif TC","Songti TC","PMingLiU",Georgia,serif;
+  --sans:"Schibsted Grotesk","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --hdr:92px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0A1519; --surface:#12232A; --surface2:#1A2F37; --ink:#E7F0F2; --ink2:#9DB3BA; --line:#27424C;
+    --trust:#45C2B2; --understand:#6BA4EA; --tension:#F0758A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.3);
+  }
+}
+:root:lang(zh-Hans){--serif:"Newsreader","Noto Serif SC","Songti SC","SimSun",Georgia,serif;--sans:"Schibsted Grotesk","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif}
+:root:lang(ta){--serif:"Newsreader","Noto Serif Tamil","Latha",Georgia,serif;--sans:"Schibsted Grotesk","Noto Sans Tamil","Nirmala UI","Latha",system-ui,-apple-system,"Segoe UI",sans-serif}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0A1519; --surface:#12232A; --surface2:#1A2F37; --ink:#E7F0F2; --ink2:#9DB3BA; --line:#27424C;
+  --trust:#45C2B2; --understand:#6BA4EA; --tension:#F0758A;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px rgba(0,0,0,.3);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--serif);font-weight:500;margin:0;letter-spacing:-.012em}
+p{margin:0 0 .8em}
+button{font-family:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-in{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding-top:10px;padding-bottom:8px}
+.brand{display:flex;align-items:center;gap:8px;background:none;border:0;padding:4px 0;color:var(--ink);font:600 21px var(--serif);cursor:pointer}
+.brand svg{color:var(--ink)}
+.nav{order:3;width:100%;display:flex;gap:4px;overflow-x:auto}
+.nav button{background:none;border:0;padding:8px 12px;border-radius:99px;color:var(--ink2);font:500 14px var(--sans);cursor:pointer;white-space:nowrap}
+.nav button.on{background:var(--surface2);color:var(--ink)}
+.seg{margin-left:auto;display:flex;border:1.5px solid var(--line);border-radius:99px;overflow:hidden}
+.seg button{background:none;border:0;padding:7px 13px;font:600 13px var(--sans);color:var(--ink2);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+@media(min-width:720px){.nav{order:0;width:auto;margin-left:auto}.seg{margin-left:0}.top-in{padding-bottom:10px}}
+
+/* buttons */
+.btn{font:600 15px/1 var(--sans);padding:14px 22px;min-height:46px;border-radius:99px;border:2px solid var(--amber);background:var(--amber);color:var(--amber-ink);cursor:pointer}
+.btn:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--ink2)}
+.btn.sm{padding:9px 16px;min-height:38px;font-size:14px}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 14px}
+
+/* avatar with halo: the one memorable element */
+.avatar{position:relative;width:var(--av,88px);height:var(--av,88px);flex:none}
+.avatar .halo{position:absolute;inset:-30%;border-radius:50%;background-color:var(--halo,#4FB3A0);filter:blur(20px);opacity:.5;transition:background-color 1.2s ease;animation:breathe var(--breath,3s) ease-in-out infinite}
+.avatar .halo.h2{inset:-9%;filter:blur(9px);opacity:.75;animation-delay:-1.1s}
+.avatar .face{position:absolute;inset:0;border-radius:50%;background:#10303A;color:#F3F8F9;display:grid;place-items:center;font-family:var(--serif);font-size:calc(var(--av,88px)*.44);font-weight:500;border:2px solid rgba(255,255,255,.4)}
+.avatar.still .halo{animation:none}
+@keyframes breathe{0%,100%{transform:scale(.9)}50%{transform:scale(1.07)}}
+
+/* hero */
+.hero{display:grid;gap:34px;padding:34px 0 30px;align-items:center}
+.hero h1{font-size:clamp(2.15rem,5.5vw,3.9rem);line-height:1.05;letter-spacing:-.028em;max-width:13em}
+:lang(zh) h1,:lang(zh) h2,:lang(zh) h3,:lang(ta) h1,:lang(ta) h2,:lang(ta) h3{letter-spacing:0}
+.lede{font-family:var(--serif);font-size:1.22rem;line-height:1.55;color:var(--ink2);max-width:33em;margin-top:18px}
+.fine{font-size:13.5px;color:var(--ink2);max-width:36em}
+.demo{background:#0C1E25;color:#E8F1F3;border-radius:38px 38px 38px 6px;padding:34px 22px 28px;display:grid;justify-items:center;gap:20px;align-content:center;min-height:380px;overflow:hidden}
+.demo .avatar{--av:120px;margin:26px 0 12px}
+.demo .dwho{font:600 13px var(--sans);color:#9CC3CB}
+.demo .dtxt{font-family:var(--serif);font-size:1.32rem;line-height:1.38;text-align:center;min-height:4.2em;max-width:22em;transition:opacity .3s;margin:0}
+.demo .dtm{font:500 13px var(--sans);color:#9CC3CB;margin:0}
+@media(min-width:900px){.hero{grid-template-columns:1.12fr .88fr;padding:70px 0 50px}}
+
+/* cases */
+.sec-h{font-size:1.9rem;margin:30px 0 14px}
+.cases{border-top:1px solid var(--line)}
+.case{display:grid;grid-template-columns:auto 1fr;gap:18px 26px;padding:28px 0;border-bottom:1px solid var(--line);align-items:start}
+.case .avatar{--av:64px;margin:12px 18px 0 12px}
+.case h3{font-size:1.75rem;margin-bottom:8px}
+.case p{color:var(--ink2);max-width:40em}
+.case .meta{display:flex;flex-wrap:wrap;gap:2px 20px;font-size:14px;color:var(--ink2);margin-bottom:16px}
+.why dl{display:grid;gap:24px 44px;margin:0 0 10px}
+.why dt{font-family:var(--serif);font-size:1.32rem;margin-bottom:6px}
+.why dd{margin:0;color:var(--ink2);max-width:28em}
+@media(min-width:800px){.why dl{grid-template-columns:repeat(3,1fr)}}
+.foot{border-top:1px solid var(--line);margin-top:48px;padding:22px 0 40px;font-size:13.5px;color:var(--ink2);max-width:46em}
+
+/* simulation */
+.sim{display:grid;gap:14px;padding:12px 0 90px}
+.room{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdr));z-index:10;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 12px;box-shadow:var(--shadow);display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;overflow:hidden}
+.room .avatar{--av:44px;margin:4px 8px 4px 6px}
+.who{font-size:13px;line-height:1.2;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.who b{font-weight:600}
+.who span{color:var(--ink2);display:none}
+.tw{font:600 12px var(--sans);color:var(--ink2);margin-bottom:4px}
+.meters{display:grid;gap:5px}
+.m{display:grid;grid-template-columns:82px 1fr 28px;align-items:center;gap:8px;font-size:12px}
+.m .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.bar{height:7px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:inherit;transition:width .9s cubic-bezier(.2,.7,.2,1)}
+.bar i.tr{background:var(--trust)} .bar i.un{background:var(--understand)} .bar i.te{background:var(--tension)}
+.spark,.hint{display:none}
+@media(min-width:900px){
+  .sim{grid-template-columns:minmax(0,1fr) 320px;gap:40px;padding-top:30px;align-items:start}
+  .room{order:2;display:block;top:calc(env(safe-area-inset-top,0px) + var(--hdr) + 18px);padding:20px;border-radius:24px}
+  .room .avatar{--av:92px;margin:22px 0 26px 22px}
+  .who{font-size:15px;margin-bottom:2px}.who span{display:inline}
+  .tw{font-size:13.5px;margin-bottom:14px}
+  .meters{gap:12px}.m{grid-template-columns:96px 1fr 32px;font-size:13.5px}.bar{height:9px}
+  .spark{display:block;margin-top:18px}.spark svg{width:100%;height:auto;display:block}
+  .hint{display:block;font-size:12.5px;color:var(--ink2);margin:12px 0 0}
+}
+.convo{display:grid;gap:16px;align-content:start;min-width:0}
+.scene{border-left:4px solid var(--amber);padding:2px 0 2px 16px;color:var(--ink2);max-width:40em}
+.scene h2{font-size:1.65rem;color:var(--ink);margin-bottom:8px}
+.scene p{margin-bottom:.5em}
+.scene .cn{font-size:13.5px}
+.b{max-width:40rem;scroll-margin-top:calc(var(--hdr) + 150px)}
+.b.npc{background:var(--surface);border:1px solid var(--line);border-radius:6px 24px 24px 24px;padding:16px 18px}
+.b .sp{font:600 13px var(--sans);color:var(--ink2);margin-bottom:6px}
+.b .sp span{font-weight:400;margin-left:8px}
+.say{font-family:var(--serif);font-size:1.22rem;line-height:1.48;margin:0}
+.notice{font-size:13.5px;color:var(--ink2);margin:10px 0 0}
+.notice b{font-weight:600}
+.b.you{justify-self:end;background:var(--ink);color:var(--bg);border-radius:24px 6px 24px 24px;padding:14px 18px}
+.b.you .say{font-size:1.12rem}
+.coach{border:1px solid var(--line);border-left-width:5px;border-radius:12px;padding:12px 14px;background:var(--surface);font-size:15px;max-width:40rem;scroll-margin-top:calc(var(--hdr) + 150px)}
+.coach.strong{border-left-color:var(--trust)} .coach.weak{border-left-color:var(--tension)}
+.coach .ct{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin-bottom:4px}
+.coach .pill{font:700 12.5px var(--sans)} .coach.strong .pill{color:var(--trust)} .coach.weak .pill{color:var(--tension)}
+.coach .tag{font-weight:600}
+.coach p{margin:0;color:var(--ink2)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font:600 12px var(--sans);padding:4px 10px;border-radius:99px;border:1.5px solid}
+.chip.g{color:var(--trust);border-color:var(--trust)} .chip.bad{color:var(--tension);border-color:var(--tension)}
+.ch-h{font:600 14px var(--sans);color:var(--ink2);margin:6px 0 -4px}
+.choices{display:grid;gap:10px;max-width:40rem}
+.choice{text-align:left;font:400 1.08rem/1.42 var(--serif);padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.choice:hover{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 13%,var(--surface))}
+.fresh{animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.endrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+
+/* debrief */
+.deb{padding:28px 0 90px}
+.deb h2{font-size:2rem;margin-bottom:6px}
+.deb-top{display:grid;gap:26px;align-items:center;margin:20px 0 34px}
+.ring{position:relative;width:150px;height:150px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .num{position:absolute;inset:0;display:grid;place-items:center;font:500 2.6rem var(--serif)}
+.ring .lbl{position:absolute;left:0;right:0;bottom:30px;text-align:center;font-size:12px;color:var(--ink2)}
+.scorebox{display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.endquote{font-family:var(--serif);font-size:1.3rem;line-height:1.45;max-width:26em;margin:0}
+.endquote small{display:block;font:500 13px var(--sans);color:var(--ink2);margin-bottom:6px}
+.charts{display:grid;gap:34px;margin-bottom:34px}
+.charts h3,.moments h3{font-size:1.4rem;margin-bottom:10px}
+.charts svg{width:100%;max-width:440px;height:auto;display:block}
+.moments{display:grid;gap:14px;max-width:46rem}
+.mo{border:1px solid var(--line);border-left-width:5px;border-radius:12px;background:var(--surface);padding:14px 16px}
+.mo.strong{border-left-color:var(--trust)} .mo.weak{border-left-color:var(--tension)}
+.mo .lab{font:600 12.5px var(--sans);color:var(--ink2);margin:10px 0 2px}
+.mo .lab:first-child{margin-top:0}
+.mo .q{font-family:var(--serif);font-size:1.08rem;line-height:1.45;margin:0}
+.mo .why2{font-size:14.5px;color:var(--ink2);margin:8px 0 0}
+.legend{display:flex;gap:16px;font-size:13px;color:var(--ink2);margin-top:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+@media(min-width:900px){.charts{grid-template-columns:1fr 1fr}}
+
+/* educator + safeguards */
+.page{padding:34px 18px 90px}
+.page h2{font-size:2.1rem;margin-bottom:8px}
+.page .sub{color:var(--ink2);max-width:40em;margin-bottom:28px}
+.edu-grid{display:grid;gap:40px}
+.edu-grid h3{font-size:1.4rem;margin-bottom:12px}
+.hb{display:grid;grid-template-columns:minmax(0,150px) 1fr 42px;gap:10px;align-items:center;margin:10px 0;font-size:14px}
+.hb .val{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2)}
+.hb .bar{height:10px}
+.hist{display:flex;align-items:flex-end;gap:10px;height:150px;border-bottom:1.5px solid var(--line)}
+.hist div{flex:1;background:var(--understand);border-radius:6px 6px 0 0;position:relative;min-height:4px}
+.hist b{position:absolute;top:-20px;left:0;right:0;text-align:center;font:600 12.5px var(--sans);color:var(--ink2)}
+.hlabels{display:flex;gap:10px;font-size:12.5px;color:var(--ink2);margin-top:6px}
+.hlabels span{flex:1;text-align:center}
+.code{font:12.5px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--surface2);padding:14px 16px;border-radius:12px;overflow:auto;max-width:100%;max-height:340px;white-space:pre;margin:12px 0 0}
+@media(min-width:900px){.edu-grid{grid-template-columns:1fr 1fr}.edu-grid .full{grid-column:1/-1}}
+.safe-list{display:grid;gap:26px;max-width:44rem;margin:0}
+.safe-list dt{font-family:var(--serif);font-size:1.3rem;margin-bottom:4px}
+.safe-list dd{margin:0;color:var(--ink2)}
+.review{border:2px dashed var(--amber);border-radius:14px;padding:14px 16px;margin-top:10px;font-size:14.5px;color:var(--ink)}
+.strongline{font-weight:600;margin-top:26px;max-width:40em}
+
+
+/* disclaimer, credits, terms, footer */
+.dis-overlay{position:fixed;inset:0;z-index:100;background:rgba(10,21,25,.62);display:grid;place-items:center;padding:20px;overflow-y:auto}
+.dis{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:24px;max-width:500px;width:100%;padding:26px 24px 22px;box-shadow:var(--shadow)}
+.dis .seg{margin:0 0 16px;display:inline-flex;flex-wrap:wrap;border-radius:18px}
+.dis h2{font-size:1.65rem;margin-bottom:14px}
+.dis ul{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:11px}
+.dis li{display:flex;gap:10px;color:var(--ink2);font-size:14.5px;line-height:1.55}
+.dis li::before{content:"\2022";color:var(--amber);font-weight:800;flex:none}
+.dis .rem{display:flex;align-items:center;gap:9px;font-size:14px;margin-bottom:18px;cursor:pointer}
+.dis .rem input{width:18px;height:18px;accent-color:var(--trust);cursor:pointer}
+.dis-act{display:flex;gap:12px}
+.dis-act .btn{flex:1;text-align:center}
+.dis-act .no{background:transparent;border-color:var(--tension);color:var(--tension)}
+@media(max-width:480px){.dis-act{flex-direction:column-reverse}}
+.cred{display:grid;gap:18px;max-width:46rem}
+.cred article{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px}
+.cred h3{font-size:1.55rem;margin-bottom:4px}
+.cred .ttl{font:600 14.5px var(--sans);color:var(--trust);margin:0 0 8px}
+.cred .aff{color:var(--ink2);margin:0;font-size:15px}
+@media(min-width:720px){.cred{grid-template-columns:1fr 1fr;max-width:none}}
+.terms .eyebrow{font:600 13px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:0 0 6px}
+.terms h2{margin-bottom:6px}
+.terms .upd{color:var(--ink2);margin-bottom:22px}
+.terms-notice{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px;color:var(--ink2);font-size:14px;max-width:46rem;margin-bottom:28px}
+.terms-body{max-width:46rem}
+.terms-body h3{font-size:1.25rem;margin:30px 0 8px}
+.terms-body h3:first-child{margin-top:0}
+.terms-body p{color:var(--ink2);line-height:1.7;margin:0}
+.sitefoot{border-top:1px solid var(--line);padding:18px 0 34px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between;font-size:13.5px;color:var(--ink2)}
+.sitefoot button{background:none;border:0;padding:6px 0;color:var(--ink);font:600 13.5px var(--sans);text-decoration:underline;cursor:pointer}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<noscript><p style="padding:20px">Gentle Truths needs JavaScript to run the simulation.</p></noscript>
+<div id="app"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- helpers ---------- */
+const ZHS={"個案":"个案","教師視角":"教师视角","安全設計":"安全设计","離開對話":"离开对话","在真正面對之前，先練習那些沒人想開口的對話。":"在真正面对之前，先练习那些没人想开口的对话。","在劇本式的情境裡，與焦慮的家屬或病人對話。你選的每一句話，都會改變信任、緊張度與理解，而且你看得見。":"在剧本式的情境里，与焦虑的家属或病人对话。你选的每一句话，都会改变信任、紧张度与理解，而且你看得见。","開始對話":"开始对话","查看教師視角":"查看教师视角","所有個案皆為虛構，僅供教學。你在此的任何操作都不會被記錄。":"所有个案皆为虚构，仅供教学。你在此的任何操作都不会被记录。","選擇個案":"选择个案","約 6 分鐘":"约 6 分钟","開始這個個案":"开始这个个案","設計原則":"设计原则","刻意採用劇本":"刻意采用剧本","學員讀到的每一句話都由人撰寫，使用前可逐句審閱。沒有 AI 會在學生面前即興發揮。":"学员读到的每一句话都由人撰写，使用前可逐句审阅。没有 AI 会在学生面前即兴发挥。","從第一句起就是雙語":"从第一句起就是双语","個案按新加坡學員熟悉的家庭結構與說話方式撰寫，提供英文與繁體中文版本。":"个案按新加坡学员熟悉的家庭结构与说话方式撰写，提供英文与繁体中文版本。","每次練習，教師也能學到東西":"每次练习，教师也能学到东西","在完整版本中，學員的選擇會匿名彙整，讓教師看見整個班級在哪些時刻最吃力。教師視角展示了這一點。":"在完整版本中，学员的选择会匿名汇整，让教师看见整个班级在哪些时刻最吃力。教师视角展示了这一点。","AgeTech Living Lab 概念原型。所有個案與數據均屬虛構，臨床內容尚待護理同事審閱。":"AgeTech Living Lab 概念原型。所有个案与数据均属虚构，临床内容尚待护理同事审阅。","此個案涉及嚴重疾病與家人的哀傷。你可以隨時離開。":"此个案涉及严重疾病与家人的哀伤。你可以随时离开。","緊張度":"紧张度","緊張度越低，氣氛越平靜。":"紧张度越低，气氛越平静。","你會怎樣回應？":"你会怎样回应？","繼續":"继续","結束對話":"结束对话","查看總結":"查看总结","錯失機會":"错失机会","非常緊張":"非常紧张","緊張":"紧张","戒備":"戒备","漸趨平靜":"渐趋平静","平靜":"平静","現場氣氛":"现场气氛","對話總結":"对话总结","對話結局":"对话结局","整體表現":"整体表现","技巧表現":"技巧表现","氣氛如何改變":"气氛如何改变","關鍵時刻":"关键时刻","你說":"你说","更好的說法":"更好的说法","重新練習此個案":"重新练习此个案","選擇另一個個案":"选择另一个个案","開始":"开始","資訊傳達":"信息传达","探索價值觀":"探索价值观","家庭與文化":"家庭与文化","誠實清晰":"诚实清晰","以下為 48 位虛構學員的示意數據，並不代表任何真實學員。":"以下为 48 位虚构学员的示意数据，并不代表任何真实学员。","全班技巧表現（中風個案）":"全班技巧表现（中风个案）","對話最容易出問題的地方":"对话最容易出问题的地方","分數分佈（48 人）":"分数分布（48 人）","個案是數據，不是程式碼":"个案是数据，不是代码","臨床人員只需填寫這個結構，就能寫出新個案：對方說什麼、學員可以怎樣回答、每個回答如何改變氣氛。不需要寫程式。":"临床人员只需填写这个结构，就能写出新个案：对方说什么、学员可以怎样回答、每个回答如何改变气氛。不需要写程序。","劇本式，非生成式":"剧本式，非生成式","每一句話都由人撰寫，學員看到之前可先審閱。情境中沒有 AI 即興發揮。":"每一句话都由人撰写，学员看到之前可先审阅。情境中没有 AI 即兴发挥。","不收集個人資料":"不收集个人数据","無需登入、沒有追蹤、不作記錄。你在此原型的任何操作都不會離開你的裝置。":"无需登录、没有追踪、不作记录。你在此原型的任何操作都不会离开你的设备。","透明的評分方式":"透明的评分方式","分數來自附在每個答案上的書面評分準則，沒有隱藏在模型裡的部分，每一分都可追溯、可提出異議。":"分数来自附在每个答案上的书面评分准则，没有隐藏在模型里的部分，每一分都可追溯、可提出异议。","情緒安全":"情绪安全","每個個案開頭都有內容提示。學員可隨時離開，每次練習後都有總結。":"每个个案开头都有内容提示。学员可随时离开，每次练习后都有总结。","臨床審閱":"临床审阅","此原型的所有個案皆為展示用草稿。":"此原型的所有个案皆为展示用草稿。","護理同事的臨床內容審閱：待進行。審閱者與日期將記錄於此。":"护理同事的临床内容审阅：待进行。审阅者与日期将记录于此。","文化與情境":"文化与情境","個案均屬虛構，按新加坡家庭情境撰寫，並打算與本地臨床人員及家屬共同發展，而不是憑空假設。":"个案均属虚构，按新加坡家庭情境撰写，并打算与本地临床人员及家属共同发展，而不是凭空假设。","僅供教學用途，並非臨床建議。":"仅供教学用途，并非临床建议。","English is the original and authoritative language of this prototype. 繁體中文, 简体中文, Bahasa Melayu and தமிழ் are produced by machine translation and have not been reviewed by a human translator. Machine-translated text may contain errors, omissions or mistranslations and should not be relied upon for clinical or legal decisions. Case scripts are currently available in English and Traditional Chinese (Simplified Chinese is converted from the Traditional text), while Malay and Tamil show the English scripts. If there is any discrepancy, the English version prevails.":"English is the original and authoritative language of this prototype. 繁体中文, 简体中文, Bahasa Melayu and தமிழ் are produced by machine translation and have not been reviewed by a human translator. Machine-translated text may contain errors, omissions or mistranslations and should not be relied upon for clinical or legal decisions. Case scripts are currently available in English and Traditional Chinese (Simplified Chinese is converted from the Traditional text), while Malay and Tamil show the English scripts. If there is any discrepancy, the English version prevails.","鳴謝":"鸣谢","條款及細則":"条款及细则","醫學、牙科與護理學院":"医学、牙科与护理学院","格拉斯哥大學":"格拉斯哥大学","資深助理教授":"资深助理教授","電腦科學學院":"计算机科学学院","格拉斯哥大學新加坡分校":"格拉斯哥大学新加坡分校","開始之前，請先閱讀":"开始之前，请先阅读","Gentle Truths 是護理教育的概念原型，屬於教學專案，並非臨床產品。":"Gentle Truths 是护理教育的概念原型，属于教学项目，并非临床产品。","所有個案與角色均屬虛構，劇本為待臨床審閱的草稿。此處內容並非臨床建議。":"所有个案与角色均属虚构，剧本为待临床审阅的草稿。此处内容并非临床建议。","情境涉及嚴重疾病與家人的哀傷，你可以隨時離開對話。":"情境涉及严重疾病与家人的哀伤，你可以随时离开对话。","英文以外的語言版本均由機器翻譯產生，可能有誤譯之處。":"英文以外的语言版本均由机器翻译产生，可能有误译之处。","在本次瀏覽期間記住我的選擇":"在本次浏览期间记住我的选择","我同意，繼續":"我同意，继续","與使用權聲明":"与使用权声明","最後更新：2026 年 10 月 2 日":"最后更新：2026 年 10 月 2 日","本頁面為機器翻譯，如與英文版本有差異，以英文版本為準。":"本页面为机器翻译，如与英文版本有差异，以英文版本为准。","1. 關於本專案":"1. 关于本项目","Gentle Truths 是學術性、非商業的概念原型，用於在護理教育中練習嚴重疾病的對話。本專案為 AgeTech Living Lab 而開發，僅供教育、研究及公共利益用途。":"Gentle Truths 是学术性、非商业的概念原型，用于在护理教育中练习严重疾病的对话。本项目为 AgeTech Living Lab 而开发，仅供教育、研究及公共利益用途。","2. 僅供教學用途，並非臨床建議":"2. 仅供教学用途，并非临床建议","Gentle Truths 是練習工具，並非臨床、醫療、法律或倫理建議的來源。劇本中的回應只代表其中一種溝通方式，並非唯一可接受的做法。真實的病人與家屬各有不同，實際決定必須依循你所屬機構的政策及合資格臨床人員的指引。情境涉及嚴重疾病與哀傷；如有需要，請隨時抽身休息，並向同事、督導或輔導員尋求支持。":"Gentle Truths 是练习工具，并非临床、医疗、法律或伦理建议的来源。剧本中的回应只代表其中一种沟通方式，并非唯一可接受的做法。真实的病人与家属各有不同，实际决定必须依循你所属机构的政策及合资格临床人员的指引。情境涉及严重疾病与哀伤；如有需要，请随时抽身休息，并向同事、督导或辅导员寻求支持。","3. 虛構個案":"3. 虚构个案","所有個案、角色、分數及全班數據均屬虛構或合成。如與真實人物有任何相似，純屬巧合。臨床內容仍為草稿，尚未經護理同事審閱。":"所有个案、角色、分数及全班数据均属虚构或合成。如与真实人物有任何相似，纯属巧合。临床内容仍为草稿，尚未经护理同事审阅。","4. 私隱":"4. 私隐","Gentle Truths 沒有登入、追蹤或錄製功能。你的選擇與分數只保留在瀏覽器中，關閉或重新載入頁面後即會消失。本頁面會從 Google Fonts 載入字型，Google 可能會依其自身條款接收你的 IP 位址。你選擇記住本同意聲明，僅會儲存在瀏覽器的工作階段儲存空間中。":"Gentle Truths 没有登录、追踪或录制功能。你的选择与分数只保留在浏览器中，关闭或重新加载页面后即会消失。本页面会从 Google Fonts 加载字体，Google 可能会依其自身条款接收你的 IP 地址。你选择记住本同意声明，仅会保存在浏览器的工作阶段保存空间中。","5. 不作保證":"5. 不作保证","我們已盡力使內容準確而恰當，但不保證其完整性、準確性、可靠性或適用於任何特定用途。Gentle Truths 按「現狀」及「可用狀態」提供，不附帶任何明示或默示的保證。":"我们已尽力使内容准确而恰当，但不保证其完整性、准确性、可靠性或适用于任何特定用途。Gentle Truths 按「现状」及「可用状态」提供，不附带任何明示或默示的保证。","6. 責任限制":"6. 责任限制","在法律允許的最大範圍內，專案團隊、貢獻者、教師及相關機構，對於你使用或依賴本原型所引致的任何損失、傷害或不良後果，概不負責。你須自行承擔使用風險。":"在法律允许的最大范围内，项目团队、贡献者、教师及相关机构，对于你使用或依赖本原型所引致的任何损失、伤害或不良后果，概不负责。你须自行承担使用风险。","7. 使用權":"7. 使用权","本原型的原始碼已公開於 GitHub，供學術及非商業再利用（授權詳情請見專案儲存庫）。個案劇本與教練回饋文字僅供教學；如加以改編，請註明專案及其作者，並請勿將其當作臨床指引。":"本原型的原代码已公开于 GitHub，供学术及非商业再利用（授权详情请见项目保存库）。个案剧本与教练回馈文本仅供教学；如加以改编，请注明项目及其作者，并请勿将其当作临床指引。","8. 條款更新":"8. 条款更新","隨著專案發展，我們可能不時更新本頁面。條款更新後繼續使用 Gentle Truths，即表示你接受修訂後的條款。":"随着项目发展，我们可能不时更新本页面。条款更新后继续使用 Gentle Truths，即表示你接受修订后的条款。","9. 語言與翻譯":"9. 语言与翻译","英文是本原型的原始及具權威的語言。繁體中文、简体中文、Bahasa Melayu 及 தமிழ் 均由機器翻譯產生，未經人手翻譯審閱。機器翻譯的文字可能有錯誤、遺漏或誤譯，不應作為臨床或法律決定的依據。個案劇本目前提供英文與繁體中文（簡體中文由繁體文字轉換而成），馬來文與坦米爾文則顯示英文劇本。如有任何差異，以英文版本為準。":"英文是本原型的原始及具权威的语言。繁体中文、简体中文、Bahasa Melayu 及 தமிழ் 均由机器翻译产生，未经人手翻译审阅。机器翻译的文本可能有错误、遗漏或误译，不应作为临床或法律决定的依据。个案剧本目前提供英文与繁体中文（简体中文由繁体文本转换而成），马来文与坦米尔文则显示英文剧本。如有任何差异，以英文版本为准。","Bahasa Inggeris ialah bahasa asal dan berautoriti bagi prototaip ini. 繁體中文, 简体中文, Bahasa Melayu dan தமிழ் dihasilkan melalui terjemahan mesin dan belum disemak oleh penterjemah manusia. Teks terjemahan mesin mungkin mengandungi kesilapan, peninggalan atau salah terjemah dan tidak boleh dijadikan bahan rujukan bagi keputusan klinikal atau undang-undang. Skrip kes kini tersedia dalam bahasa Inggeris dan Cina Tradisional (Cina Ringkas ditukar daripada teks Tradisional), manakala bahasa Melayu dan Tamil memaparkan skrip bahasa Inggeris. Jika terdapat sebarang percanggahan, versi bahasa Inggeris diutamakan.":"Bahasa Inggeris ialah bahasa asal dan berautoriti bagi prototaip ini. 繁体中文, 简体中文, Bahasa Melayu dan தமிழ் dihasilkan melalui terjemahan mesin dan belum disemak oleh penterjemah manusia. Teks terjemahan mesin mungkin mengandungi kesilapan, peninggalan atau salah terjemah dan tidak boleh dijadikan bahan rujukan bagi keputusan klinikal atau undang-undang. Skrip kes kini tersedia dalam bahasa Inggeris dan Cina Tradisional (Cina Ringkas ditukar daripada teks Tradisional), manakala bahasa Melayu dan Tamil memaparkan skrip bahasa Inggeris. Jika terdapat sebarang percanggahan, versi bahasa Inggeris diutamakan.","ஆங்கிலமே இந்த முன்மாதிரியின் மூல மற்றும் அதிகாரப்பூர்வ மொழி. 繁體中文, 简体中文, Bahasa Melayu, தமிழ் ஆகியவை இயந்திர மொழிபெயர்ப்பால் உருவாக்கப்பட்டவை; மனித மொழிபெயர்ப்பாளரால் மதிப்பாய்வு செய்யப்படவில்லை. இயந்திர மொழிபெயர்ப்பு உரையில் பிழைகள், விடுபடல்கள், தவறான மொழிபெயர்ப்புகள் இருக்கக்கூடும்; மருத்துவ அல்லது சட்ட முடிவுகளுக்கு அதை நம்பக்கூடாது. வழக்கு உரைகள் தற்போது ஆங்கிலம் மற்றும் பாரம்பரிய சீன மொழியில் (எளிய சீன மொழி பாரம்பரிய உரையிலிருந்து மாற்றப்பட்டது) உள்ளன; மலாய், தமிழ் மொழிகளில் ஆங்கில உரைகள் காட்டப்படும். ஏதேனும் முரண்பாடு இருந்தால் ஆங்கில பதிப்பே மேலோங்கும்.":"ஆங்கிலமே இந்த முன்மாதிரியின் மூல மற்றும் அதிகாரப்பூர்வ மொழி. 繁体中文, 简体中文, Bahasa Melayu, தமிழ் ஆகியவை இயந்திர மொழிபெயர்ப்பால் உருவாக்கப்பட்டவை; மனித மொழிபெயர்ப்பாளரால் மதிப்பாய்வு செய்யப்படவில்லை. இயந்திர மொழிபெயர்ப்பு உரையில் பிழைகள், விடுபடல்கள், தவறான மொழிபெயர்ப்புகள் இருக்கக்கூடும்; மருத்துவ அல்லது சட்ட முடிவுகளுக்கு அதை நம்பக்கூடாது. வழக்கு உரைகள் தற்போது ஆங்கிலம் மற்றும் பாரம்பரிய சீன மொழியில் (எளிய சீன மொழி பாரம்பரிய உரையிலிருந்து மாற்றப்பட்டது) உள்ளன; மலாய், தமிழ் மொழிகளில் ஆங்கில உரைகள் காட்டப்படும். ஏதேனும் முரண்பாடு இருந்தால் ஆங்கில பதிப்பே மேலோங்கும்.","繁體中文":"繁体中文","大面積中風之後":"大面积中风之后","林太（82歲）吞嚥不安全，意識也未完全清醒。女兒心力交瘁，海外的哥哥要求「全力搶救」，而餵食管的決定迫在眉睫。":"林太（82岁）吞咽不安全，意识也未完全清醒。女儿心力交瘁，海外的哥哥要求「全力抢救」，而喂食管的决定迫在眉睫。","急性中風病房家屬室，第六日":"急性中风病房家属室，第六日","你是病房護士。林太（82歲）六天前發生大面積中風，目前還不能安全吞嚥。她的女兒 Jenny 想和你談幾分鐘。":"你是病房护士。林太（82岁）六天前发生大面积中风，目前还不能安全吞咽。她的女儿 Jenny 想和你谈几分钟。","女兒，52歲":"女儿，52岁","「謝謝你陪著我。我想……我現在可以跟我哥哥談了。」":"「谢谢你陪着我。我想……我现在可以跟我哥哥谈了。」","「好吧，我會想一想。謝謝你解釋。」":"「好吧，我会想一想。谢谢你解释。」","「我想跟別的人談談。」":"「我想跟别的人谈谈。」","我早上五點就在這裡了。每個醫生說的都不一樣。可不可以有人直接告訴我，我媽媽到底怎麼了？":"我早上五点就在这里了。每个医生说的都不一样。可不可以有人直接告诉我，我妈妈到底怎么了？","Jenny 看起來疲憊而沮喪，她想要一個直接的答案。":"Jenny 看起来疲惫而沮丧，她想要一个直接的答案。","我明白這很辛苦。醫生們都很忙，但他們都已經盡力了。我們等查房的時候再說吧。":"我明白这很辛苦。医生们都很忙，但他们都已经尽力了。我们等查房的时候再说吧。","迴避":"回避","泛泛的安慰，又把問題推給別人。Jenny 問得很直接，卻什麼也沒得到。":"泛泛的安慰，又把问题推给别人。Jenny 问得很直接，却什么也没得到。","你一直扛著這麼多，還要面對各種不同的說法，一定很累。我想一步一步跟你說明現在的情況。到目前為止，你了解到什麼？":"你一直扛着这么多，还要面对各种不同的说法，一定很累。我想一步一步跟你说明现在的情况。到目前为止，你了解到什么？","點出感受，先問對方":"点出感受，先问对方","你先說出她的疲憊，再邀請她說出所知，然後才解釋。這就是「先問、再說、再確認」。":"你先说出她的疲惫，再邀请她说出所知，然后才解释。这就是「先问、再说、再确认」。","你母親的核磁共振顯示左側大腦中動脈大面積梗塞並有佔位效應，格拉斯哥昏迷指數下降，出現吞嚥困難，所以預後保守。":"你母亲的核磁共振显示左侧大脑中动脉大面积梗塞并有占位效应，格拉斯哥昏迷指数下降，出现吞咽困难，所以预后保守。","專業術語過多":"专业术语过多","內容正確，卻是一堆術語。Jenny 要的是清楚，你給的卻是密碼。":"内容正确，却是一堆术语。Jenny 要的是清楚，你给的却是密码。","他們一直說「預後保守」。那到底是什麼意思？她會好起來嗎？":"他们一直说「预后保守」。那到底是什么意思？她会好起来吗？","Jenny 很焦慮，需要一個可以抓住的坦白答案。":"Jenny 很焦虑，需要一个可以抓住的坦白答案。","意思是我們很擔心。這次中風範圍很大，我認為她不太可能回復到以前的樣子。我不能確切說會發生什麼，有些人也會慢慢好轉。你想不想我解釋一下，未來幾天我們會留意什麼？":"意思是我们很担心。这次中风范围很大，我认为她不太可能回复到以前的样子。我不能确切说会发生什么，有些人也会慢慢好转。你想不想我解释一下，未来几天我们会留意什么？","誠實並保留不確定性":"诚实并保留不确定性","清楚說出擔憂、坦白不確定性，還提出下一步。緊張度略升，因為事實本來就沉重，這是正常的。":"清楚说出担忧、坦白不确定性，还提出下一步。紧张度略升，因为事实本来就沉重，这是正常的。","她是個鬥士。很多這個年紀的病人都撐過去了，我們保持正面吧。":"她是个斗士。很多这个年纪的病人都撑过去了，我们保持正面吧。","虛假安慰":"虚假安慰","這句話一時安撫了她，卻不是團隊真正的判斷。若情況轉差，Jenny 會記得你曾這樣說。":"这句话一时安抚了她，却不是团队真正的判断。若情况转差，Jenny 会记得你曾这样说。","她很可能不會康復。你要有最壞的心理準備。":"她很可能不会康复。你要有最坏的心理准备。","直白卻沒有陪伴":"直白却没有陪伴","內容誠實，但語氣冰冷、沒有停頓，也沒有後續支持。":"内容诚实，但语气冰冷、没有停顿，也没有后续支持。","請不要告訴我媽媽病得多嚴重，她會失去求生意志的。而且我哥哥在澳洲，他說要盡一切可能搶救。他是長子，由他決定。":"请不要告诉我妈妈病得多严重，她会失去求生意志的。而且我哥哥在澳洲，他说要尽一切可能抢救。他是长子，由他决定。","Jenny 想保護母親，同時承受來自家人的壓力。":"Jenny 想保护母亲，同时承受来自家人的压力。","當然。我們會照家人的意思，不會跟她說什麼。":"当然。我们会照家人的意思，不会跟她说什么。","答應隱瞞":"答应隐瞒","這尊重了家人想保護她的心意，卻關上了林太自己想知道什麼的門。先探索，才決定。":"这尊重了家人想保护她的心意，却关上了林太自己想知道什么的门。先探索，才决定。","按法律，你母親有權知道一切，而你哥哥在這件事上沒有發言權。":"按法律，你母亲有权知道一切，而你哥哥在这件事上没有发言权。","原則很重要，但一開口就搬出法律，等於否定了 Jenny 家庭做決定的方式，她只會更設防。":"原则很重要，但一开口就搬出法律，等于否定了 Jenny 家庭做决定的方式，她只会更设防。","聽起來你很想保護媽媽，這是出於愛。你可以告訴我，你們家通常怎樣做重大決定，以及媽媽希望怎樣得知自己的健康消息嗎？":"听起来你很想保护妈妈，这是出于爱。你可以告诉我，你们家通常怎样做重大决定，以及妈妈希望怎样得知自己的健康消息吗？","尊重家庭，並探索她的意願":"尊重家庭，并探索她的意愿","你肯定了她保護母親的心意，並為「林太自己想怎樣知道病情」打開了空間，又沒有與家庭結構對立。":"你肯定了她保护母亲的心意，并为「林太自己想怎样知道病情」打开了空间，又没有与家庭结构对立。","她以前說過，經歷了爸爸那次之後，她不想「靠一堆管子維持生命」。但現在醫療團隊想為她插餵食管。如果我說不要，是不是等於我害死她？":"她以前说过，经历了爸爸那次之后，她不想「靠一堆管子维持生命」。但现在医疗团队想为她插喂食管。如果我说不要，是不是等于我害死她？","Jenny 承載著內疚與哀傷，這是所有話題底下真正的問題。":"Jenny 承载着内疚与哀伤，这是所有话题底下真正的问题。","你不應該這樣想。沒有人害死誰。餵食管是標準做法。":"你不应该这样想。没有人害死谁。喂食管是标准做法。","否定對方感受":"否定对方感受","叫人別內疚通常沒用，而說餵食管是「標準做法」，等於在沒聽過母親意願前就把她推向答應。":"叫人别内疚通常没用，而说喂食管是「标准做法」，等于在没听过母亲意愿前就把她推向答应。","這是一個很沉重的問題。不接受餵食管，並不等於放棄她。我們先想想，對你媽媽來說什麼最重要。她會怎樣形容值得活下去的生活？然後我們再看看餵食管能為她做到什麼、做不到什麼。":"这是一个很沉重的问题。不接受喂食管，并不等于放弃她。我们先想想，对你妈妈来说什么最重要。她会怎样形容值得活下去的生活？然后我们再看看喂食管能为她做到什么、做不到什么。","化解內疚，轉向她的價值觀":"化解内疚，转向她的价值观","你承認了她的沉重、把決定與「責怪」分開，並回到病人自己的價值觀。醫療細節是跟著價值觀走，而不是反過來。":"你承认了她的沉重、把决定与「责怪」分开，并回到病人自己的价值观。医疗细节是跟着价值观走，而不是反过来。","這是醫生和你哥哥的決定。我實在不方便討論。":"这是医生和你哥哥的决定。我实在不方便讨论。","抽身離開":"抽身离开","護士往往最先聽到真正的問題。在這一刻抽身，讓 Jenny 在最需要人的時候孤單一人。":"护士往往最先听到真正的问题。在这一刻抽身，让 Jenny 在最需要人的时候孤单一人。","我不知道。我只是需要一點時間。接下來會怎樣？":"我不知道。我只是需要一点时间。接下来会怎样？","Jenny 不知所措，但稍微平靜了一些，她在問有什麼支持。":"Jenny 不知所措，但稍微平静了一些，她在问有什么支持。","如果拖延決定，她的情況可能會變差，所以請你明天告訴我們。":"如果拖延决定，她的情况可能会变差，所以请你明天告诉我们。","施加壓力":"施加压力","時間壓力或許是真的，但一開口就講期限只會變成施壓。先提供路徑與支持。":"时间压力或许是真的，但一开口就讲期限只会变成施压。先提供路径与支持。","慢慢來。你決定了再告訴我，我會轉告團隊。":"慢慢来。你决定了再告诉我，我会转告团队。","讓她獨自面對":"让她独自面对","語氣溫和，但等於把全部重擔交還給 Jenny，沒有計劃，也沒有支持。":"语气温和，但等于把全部重担交还给 Jenny，没有计划，也没有支持。","你不需要獨自做決定，也不用現在就決定。我可以安排醫生與家人一起開會，讓你哥哥以視訊參加，我會陪你一起面對。這段時間我們會讓你媽媽保持舒適。你現在有沒有什麼需要？":"你不需要独自做决定，也不用现在就决定。我可以安排医生与家人一起开会，让你哥哥以视频参加，我会陪你一起面对。这段时间我们会让你妈妈保持舒适。你现在有没有什么需要？","共同計劃並陪伴":"共同计划并陪伴","具體的下一步、把整個家庭納入，並表明你會陪著她。這就是「同行」的說法。":"具体的下一步、把整个家庭纳入，并表明你会陪着她。这就是「同行」的说法。","Rahman 先生（76歲）今年第三次入院。他疲憊、夜裡害怕，卻沒有告訴太太。他最想做的，是在家陪孫子孫女。":"Rahman 先生（76岁）今年第三次入院。他疲惫、夜里害怕，却没有告诉太太。他最想做的，是在家陪孙子孙女。","呼吸內科病房，傍晚":"呼吸内科病房，傍晚","你是病房護士。Rahman 先生（76歲）患有晚期慢阻肺，今年第三次入院。他的太太坐在床邊。他問你有沒有空聊幾句。":"你是病房护士。Rahman 先生（76岁）患有晚期慢阻肺，今年第三次入院。他的太太坐在床边。他问你有没有空聊几句。","病人，76歲":"病人，76岁","「好，就這樣辦。還有……我想我該告訴太太夜裡的情況。」":"「好，就这样办。还有……我想我该告诉太太夜里的情况。」","「我想休息一下，麻煩你了。」":"「我想休息一下，麻烦你了。」","今年第三次住院了。我累了，護士。每次以為好轉，又回到這裡。":"今年第三次住院了。我累了，护士。每次以为好转，又回到这里。","Rahman 先生聽起來很疲倦，他在說這個反覆的循環，並不是在問醫療問題。":"Rahman 先生听起来很疲倦，他在说这个反复的循环，并不是在问医疗问题。","你今天狀況很好！血氧比昨天好多了。":"你今天状况很好！血氧比昨天好多了。","用樂觀轉移話題":"用乐观转移话题","血氧好轉是好消息，但他剛說的是對這個循環感到厭倦。樂觀的語氣跳過了這一點。":"血氧好转是好消息，但他刚说的是对这个循环感到厌倦。乐观的语气跳过了这一点。","聽起來很消耗人，起起伏伏，一次又一次回來。對你來說，最難受的是什麼？":"听起来很消耗人，起起伏伏，一次又一次回来。对你来说，最难受的是什么？","點出感受，邀請他多說":"点出感受，邀请他多说","簡短、溫暖而開放。你為他騰出空間，說出真正困難的地方。":"简短、温暖而开放。你为他腾出空间，说出真正困难的地方。","這是慢阻肺的一部分。最重要的是正確使用吸入劑，避免胸部感染。":"这是慢阻肺的一部分。最重要的是正确使用吸入剂，避免胸部感染。","未聽先講":"未听先讲","內容正確，卻回答了他沒問的問題，底下的感受沒有被聽見。":"内容正确，却回答了他没问的问题，底下的感受没有被听见。","夜裡喘不過氣的時候，我好害怕。我沒有告訴我太太。這就是結局了嗎？":"夜里喘不过气的时候，我好害怕。我没有告诉我太太。这就是结局了吗？","他剛說出一個一直隱藏的恐懼，並直接問了一個問題。":"他刚说出一个一直隐藏的恐惧，并直接问了一个问题。","請別擔心。我們會幫你度過的。":"请别担心。我们会帮你度过的。","無法兌現的承諾":"无法兑现的承诺","這句話暫時安慰了他，但晚期慢阻肺沒有人能這樣保證，他會察覺的。":"这句话暂时安慰了他，但晚期慢阻肺没有人能这样保证，他会察觉的。","慢阻肺是絕症，你的肺功能只會越來越差。":"慢阻肺是绝症，你的肺功能只会越来越差。","直白但沒有陪伴":"直白但没有陪伴","部分屬實，但像宣判一樣拋出，沒有回應他的恐懼，也沒有提供幫助。":"部分属实，但像宣判一样抛出，没有回应他的恐惧，也没有提供帮助。","這聽起來很可怕，謝謝你告訴我。慢阻肺是長期疾病，可能隨時間惡化，我不能保證會怎樣發展。但夜裡喘不過氣，是我們可以一起想辦法處理的。你對接下來的走向了解多少？":"这听起来很可怕，谢谢你告诉我。慢阻肺是长期疾病，可能随时间恶化，我不能保证会怎样发展。但夜里喘不过气，是我们可以一起想办法处理的。你对接下来的走向了解多少？","誠實，並為恐懼提供出路":"诚实，并为恐惧提供出路","你點出恐懼、沒有下判決地說出真相，並在詢問他的理解之前先提供實際的幫助。":"你点出恐惧、没有下判决地说出真相，并在询问他的理解之前先提供实际的帮助。","我想要的，是在家陪孫子孫女。可是萬一我又進了急症室、要接呼吸機呢？我不想被機器撐上好幾個星期。":"我想要的，是在家陪孙子孙女。可是万一我又进了急症室、要接呼吸机呢？我不想被机器撑上好几个星期。","他很清楚什麼對自己最重要，也有點害怕情況會變得不如所願。":"他很清楚什么对自己最重要，也有点害怕情况会变得不如所愿。","我們現在先別想那些。先專心好起來。":"我们现在先别想那些。先专心好起来。","關上對話之門":"关上对话之门","他終於說出自己想要什麼。把話題推後，等於告訴他這不是可以談的事。":"他终于说出自己想要什么。把话题推后，等于告诉他这不是可以谈的事。","謝謝你告訴我。這讓我們有實在的東西可以規劃。在家陪孫子孫女對你很重要，而你不想長期依賴機器。你想不想一起了解各種選擇，讓你的意願可以被記錄下來？":"谢谢你告诉我。这让我们有实在的东西可以规划。在家陪孙子孙女对你很重要，而你不想长期依赖机器。你想不想一起了解各种选择，让你的意愿可以被记录下来？","回應他的話，並提出規劃":"回应他的话，并提出规划","你用他自己的話把他的優先事項說回給他聽，並提出讓他掌握主導權的下一步。":"你用他自己的话把他的优先事项说回给他听，并提出让他掌握主导权的下一步。","好，我會在你的病歷註明你不想使用呼吸機。":"好，我会在你的病历注明你不想使用呼吸机。","太快下結論":"太快下结论","聽起來很迅速，卻跳過了「他實際上在選擇什麼」的對話。在任何記錄之前，需要先與醫生一起探索他的意願。":"听起来很迅速，却跳过了「他实际上在选择什么」的对话。在任何记录之前，需要先与医生一起探索他的意愿。","太太，72歲":"太太，72岁","他總是這樣說。我連想都不敢想。醫生應該直接決定才對吧？":"他总是这样说。我连想都不敢想。医生应该直接决定才对吧？","他的太太一直安靜地聽著。她很害怕，想把決定交給別人。":"他的太太一直安静地听着。她很害怕，想把决定交给别人。","對，醫生會決定什麼對他最好。":"对，医生会决定什么对他最好。","把決定交出去":"把决定交出去","這讓她一時鬆了口氣，卻把選擇權從 Rahman 先生手上拿走，而他剛剛才清楚說出自己想要什麼。":"这让她一时松了口气，却把选择权从 Rahman 先生手上拿走，而他刚刚才清楚说出自己想要什么。","Rahman 先生，你太太很難過。也許我們改天再談這個。":"Rahman 先生，你太太很难过。也许我们改天再谈这个。","中止對話":"中止对话","這保護了當下，卻在一場困難而重要的對話剛剛打開時就把它關上。":"这保护了当下，却在一场困难而重要的对话刚刚打开时就把它关上。","光是想到就很可怕，你希望有人替你承擔，這很可以理解。這件事上，你先生的意願最重要，醫生會提供意見，但不應該單獨決定。我們可以一起談談他想要什麼，以及你最擔心的是什麼嗎？":"光是想到就很可怕，你希望有人替你承担，这很可以理解。这件事上，你先生的意愿最重要，医生会提供意见，但不应该单独决定。我们可以一起谈谈他想要什么，以及你最担心的是什么吗？","納入太太，並保持他的主導":"纳入太太，并保持他的主导","你承認了她的恐懼，又沒有把決定從他手上拿走，同時為兩人騰出空間。":"你承认了她的恐惧，又没有把决定从他手上拿走，同时为两人腾出空间。","那接下來會怎樣？我今天不想簽任何東西。":"那接下来会怎样？我今天不想签任何东西。","Rahman 先生有些戒備，想掌握節奏。":"Rahman 先生有些戒备，想掌握节奏。","你今天不用簽任何東西。等你準備好，我會請醫生和我們的紓緩護理團隊與你和太太坐下來談。我也會為夜裡喘不過氣的情況寫一份計劃，讓你知道該怎麼做、打給誰。這樣可以嗎？":"你今天不用签任何东西。等你准备好，我会请医生和我们的纾缓护理团队与你和太太坐下来谈。我也会为夜里喘不过气的情况写一份计划，让你知道该怎么做、打给谁。这样可以吗？","讓他掌握主導，並提供實際計劃":"让他掌握主导，并提供实际计划","你把節奏交還給他，為他的恐懼提供實際計劃和清晰的方向，並確認這樣是否合適。":"你把节奏交还给他，为他的恐惧提供实际计划和清晰的方向，并确认这样是否合适。","看情況再說吧。":"看情况再说吧。","含糊其辭":"含糊其辞","他問接下來會怎樣。含糊的回答只會讓恐懼繼續作主。":"他问接下来会怎样。含糊的回答只会让恐惧继续作主。","如果你出院前簽好預設照護計劃表格，會很有幫助。":"如果你出院前签好预设照护计划表格，会很有帮助。","催促簽表格":"催促签表格","他已說明今天不想簽。表格不等於對話。":"他已说明今天不想签。表格不等于对话。","「可不可以有人直接告訴我，我媽媽到底怎麼了？」":"「可不可以有人直接告诉我，我妈妈到底怎么了？」","「你一直扛著這麼多。到目前為止，你了解到什麼？」":"「你一直扛着这么多。到目前为止，你了解到什么？」","「他們一直說『保守』，我不知道那是什麼意思。」":"「他们一直说『保守』，我不知道那是什么意思。」","「意思是我們很擔心。讓我一步一步解釋。」":"「意思是我们很担心。让我一步一步解释。」","第 3 步「請不要告訴我媽媽」：答應隱瞞，或搬出法律":"第 3 步「请不要告诉我妈妈」：答应隐瞒，或搬出法律","第 4 步餵食管的內疚：否定感受或抽身離開":"第 4 步喂食管的内疚：否定感受或抽身离开","第 2 步預後：給予虛假安慰":"第 2 步预后：给予虚假安慰","第 5 步下一步：施加壓力或讓她獨自面對":"第 5 步下一步：施加压力或让她独自面对"};
+const simp=s=>ZHS[s]||s;
+const SK=['empathy','info','values','family','honesty'];
+const t=(en,zh)=>({en,zh});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cl=v=>Math.max(0,Math.min(100,Math.round(v)));
+const o=(say,tag,fx,sk,q,fb)=>({say,tag,fx,sk,q,fb});
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+let demoTimer=null;
+
+/* ---------- interface strings ---------- */
+const UI={
+en:{
+ nav_cases:'Cases',nav_edu:'Educator view',nav_safe:'Safeguards',leave:'Leave conversation',
+ h1:'Practise the conversations nobody wants to have, before the real one.',
+ lede:'Talk with a worried family member or patient in a scripted scene. Every sentence you choose moves trust, tension and understanding, and you can watch it happen.',
+ cta:'Start a conversation',cta2:'See the educator view',
+ fine:'Fictional cases for education. Nothing you do here is recorded.',
+ cases_h:'Choose a case',dur:'About 6 minutes',ex:'5 exchanges',start:'Begin this case',
+ why_h:'How it is built',
+ why1_t:'Scripted on purpose',why1_d:'Every line a learner reads was written by people and can be reviewed before use. No AI improvises in front of students.',
+ why2_t:'Bilingual from the first line',why2_d:'Cases are written for family structures and ways of speaking that learners in Singapore recognise, in English and Traditional Chinese.',
+ why3_t:'Every session teaches the educator too',why3_d:'In a full version, choices are pooled anonymously so educators can see which moments a whole cohort finds hardest. The educator view shows how.',
+ foot:'Concept prototype for the AgeTech Living Lab. All cases and data shown are fictional, and clinical content is pending review by nursing colleagues.',
+ scene_note:'This case involves serious illness and family grief. You can leave at any time.',
+ notice:'You notice:',trust:'Trust',tension:'Tension',understand:'Understanding',calmer:'Lower tension is calmer.',
+ choose_h:'What do you say?',cont:'Continue',finish:'Finish conversation',debrief_btn:'See debrief',
+ pill_s:'Strong move',pill_w:'Missed opportunity',
+ tw4:'Very tense',tw3:'Tense',tw2:'Guarded',tw1:'Settling',tw0:'Calm',temp_l:'Room reading',
+ deb_h:'Conversation debrief',ended:'How it ended',overall:'overall',skills_h:'Skills',flow_h:'How the room changed',
+ moments_h:'Key moments',youSaid:'You said',stronger:'A stronger option',retry:'Try this case again',other:'Choose another case',startlbl:'Start',
+ sk_empathy:'Empathy',sk_info:'Sharing information',sk_values:'Exploring values',sk_family:'Family and culture',sk_honesty:'Honest clarity',
+ edu_h:'Educator view',edu_note:'Illustrative data from 48 synthetic learners. No real learners are represented.',
+ edu_skills:'Cohort skills, stroke case',edu_wrong:'Where conversations go wrong',edu_dist:'Score distribution (48 learners)',
+ edu_data_h:'Cases are data, not code',edu_data_p:'A clinician can author a new case by filling in this structure: what the person says, what the learner can answer, and how each answer moves the room. No programming needed.',
+ safe_h:'Safeguards',
+ s1_t:'Scripted, not generative',s1_d:'Every line was written by people and can be reviewed before learners see it. No AI improvises in a scene.',
+ s2_t:'No personal data',s2_d:'No sign-in, no tracking and no recording. Nothing you do in this prototype leaves your device.',
+ s3_t:'Transparent scoring',s3_d:'Scores come from a written rubric attached to each answer. Nothing is hidden in a model, so every point can be traced and challenged.',
+ s4_t:'Emotional safety',s4_d:'Each case opens with a content note. Learners can leave at any time, and a debrief follows every session.',
+ s5_t:'Clinical review',s5_d:'All cases in this prototype are drafts written for demonstration.',s5_r:'Clinical content review by nursing colleagues: pending. Reviewer and date to be recorded here.',
+ s6_t:'Culture and context',s6_d:'Cases are fictional and written for Singapore family contexts. They are meant to be co-developed with local clinicians and families, not assumed.',
+ s_edu:'Educational use only. Not clinical advice.'
+},
+zh:{
+ nav_cases:'個案',nav_edu:'教師視角',nav_safe:'安全設計',leave:'離開對話',
+ h1:'在真正面對之前，先練習那些沒人想開口的對話。',
+ lede:'在劇本式的情境裡，與焦慮的家屬或病人對話。你選的每一句話，都會改變信任、緊張度與理解，而且你看得見。',
+ cta:'開始對話',cta2:'查看教師視角',
+ fine:'所有個案皆為虛構，僅供教學。你在此的任何操作都不會被記錄。',
+ cases_h:'選擇個案',dur:'約 6 分鐘',ex:'5 次交流',start:'開始這個個案',
+ why_h:'設計原則',
+ why1_t:'刻意採用劇本',why1_d:'學員讀到的每一句話都由人撰寫，使用前可逐句審閱。沒有 AI 會在學生面前即興發揮。',
+ why2_t:'從第一句起就是雙語',why2_d:'個案按新加坡學員熟悉的家庭結構與說話方式撰寫，提供英文與繁體中文版本。',
+ why3_t:'每次練習，教師也能學到東西',why3_d:'在完整版本中，學員的選擇會匿名彙整，讓教師看見整個班級在哪些時刻最吃力。教師視角展示了這一點。',
+ foot:'AgeTech Living Lab 概念原型。所有個案與數據均屬虛構，臨床內容尚待護理同事審閱。',
+ scene_note:'此個案涉及嚴重疾病與家人的哀傷。你可以隨時離開。',
+ notice:'你留意到：',trust:'信任',tension:'緊張度',understand:'理解',calmer:'緊張度越低，氣氛越平靜。',
+ choose_h:'你會怎樣回應？',cont:'繼續',finish:'結束對話',debrief_btn:'查看總結',
+ pill_s:'有效做法',pill_w:'錯失機會',
+ tw4:'非常緊張',tw3:'緊張',tw2:'戒備',tw1:'漸趨平靜',tw0:'平靜',temp_l:'現場氣氛',
+ deb_h:'對話總結',ended:'對話結局',overall:'整體表現',skills_h:'技巧表現',flow_h:'氣氛如何改變',
+ moments_h:'關鍵時刻',youSaid:'你說',stronger:'更好的說法',retry:'重新練習此個案',other:'選擇另一個個案',startlbl:'開始',
+ sk_empathy:'同理心',sk_info:'資訊傳達',sk_values:'探索價值觀',sk_family:'家庭與文化',sk_honesty:'誠實清晰',
+ edu_h:'教師視角',edu_note:'以下為 48 位虛構學員的示意數據，並不代表任何真實學員。',
+ edu_skills:'全班技巧表現（中風個案）',edu_wrong:'對話最容易出問題的地方',edu_dist:'分數分佈（48 人）',
+ edu_data_h:'個案是數據，不是程式碼',edu_data_p:'臨床人員只需填寫這個結構，就能寫出新個案：對方說什麼、學員可以怎樣回答、每個回答如何改變氣氛。不需要寫程式。',
+ safe_h:'安全設計',
+ s1_t:'劇本式，非生成式',s1_d:'每一句話都由人撰寫，學員看到之前可先審閱。情境中沒有 AI 即興發揮。',
+ s2_t:'不收集個人資料',s2_d:'無需登入、沒有追蹤、不作記錄。你在此原型的任何操作都不會離開你的裝置。',
+ s3_t:'透明的評分方式',s3_d:'分數來自附在每個答案上的書面評分準則，沒有隱藏在模型裡的部分，每一分都可追溯、可提出異議。',
+ s4_t:'情緒安全',s4_d:'每個個案開頭都有內容提示。學員可隨時離開，每次練習後都有總結。',
+ s5_t:'臨床審閱',s5_d:'此原型的所有個案皆為展示用草稿。',s5_r:'護理同事的臨床內容審閱：待進行。審閱者與日期將記錄於此。',
+ s6_t:'文化與情境',s6_d:'個案均屬虛構，按新加坡家庭情境撰寫，並打算與本地臨床人員及家屬共同發展，而不是憑空假設。',
+ s_edu:'僅供教學用途，並非臨床建議。'
+}};
+/* ---------- added interface strings: terms, disclaimer, credits, and Malay / Tamil ---------- */
+const NEW={
+en:{
+ nav_credits:'Credits',foot_terms:'Terms & Conditions',credits_h:'Credits',case_en_only:'',
+ cr1_title:'Associate Professor',cr1_aff1:'School of Medicine, Dentistry & Nursing',cr1_aff2:'University of Glasgow',
+ cr2_title:'Senior Assistant Professor',cr2_aff1:'School of Computing Science',cr2_aff2:'University of Glasgow Singapore',
+ dis_title:'Before you begin',
+ dis_p1:'Gentle Truths is a concept prototype for nursing education. It is a learning and teaching project, not a clinical product.',
+ dis_p2:'All cases and characters are fictional, and the scripts are drafts pending clinical review. Nothing here is clinical advice.',
+ dis_p3:'The scenes deal with serious illness and family grief. You can leave a conversation at any time.',
+ dis_p4:'Languages other than English are machine-translated and may contain errors.',
+ dis_remember:'Remember my choice for this session',dis_agree:'I Agree, Continue',dis_disagree:'I Disagree',
+ terms_eyebrow:'Legal',terms_h1:'Terms & Conditions',terms_h2:'and right of use statement',terms_updated:'Last updated 2 October 2026',terms_notice:'',
+ t1_t:'1. About this project',t1_d:'Gentle Truths is an academic, non-commercial concept prototype for practising serious illness conversations in nursing education. It was developed for the AgeTech Living Lab and is provided for educational, research and public-benefit purposes only.',
+ t2_t:'2. Educational use only, not clinical advice',t2_d:'Gentle Truths is a practice tool, not a source of clinical, medical, legal or ethical advice. The scripted responses reflect one approach to communication and are not the only acceptable one. Real patients and families differ, and real decisions must follow your institution\'s policies and the guidance of qualified clinicians. The scenes involve serious illness and grief; step away at any time if you need to, and seek support from a colleague, supervisor or counsellor.',
+ t3_t:'3. Fictional cases',t3_d:'All cases, characters, scores and cohort data are fictional or synthetic. Any resemblance to real people is coincidental. Clinical content is in draft and has not yet been reviewed by nursing colleagues.',
+ t4_t:'4. Privacy',t4_d:'Gentle Truths has no sign-in, tracking or recording. Your choices and scores stay in your browser and are lost when you close or reload the page. The page loads fonts from Google Fonts, which may receive your IP address under Google\'s own terms. Your choice to remember this agreement is kept in your browser\'s session storage only.',
+ t5_t:'5. No warranty',t5_d:'We have tried to make the content accurate and appropriate, but we do not warrant its completeness, accuracy, reliability or suitability for any purpose. Gentle Truths is provided “as is” and “as available”, without warranties of any kind, express or implied.',
+ t6_t:'6. Limitation of liability',t6_d:'To the fullest extent permitted by law, the project team, contributors, faculty and affiliated institutions accept no liability for any loss, harm or adverse outcome arising from your use of, or reliance on, this prototype. You use it at your own risk.',
+ t7_t:'7. Right of use',t7_d:'The source code of this prototype is published on GitHub for academic and non-commercial reuse (see the project repository for licence details). The case scripts and coaching text are provided for teaching. Please credit the project and its authors if you adapt them, and do not present them as clinical guidance.',
+ t8_t:'8. Changes to these terms',t8_d:'We may update this page from time to time as the project evolves. Continued use of Gentle Truths after changes are posted constitutes acceptance of the revised terms.',
+ t9_t:'9. Language and translations',t9_d:'English is the original and authoritative language of this prototype. 繁體中文, 简体中文, Bahasa Melayu and தமிழ் are produced by machine translation and have not been reviewed by a human translator. Machine-translated text may contain errors, omissions or mistranslations and should not be relied upon for clinical or legal decisions. Case scripts are currently available in English and Traditional Chinese (Simplified Chinese is converted from the Traditional text), while Malay and Tamil show the English scripts. If there is any discrepancy, the English version prevails.'
+},
+zh:{
+ nav_credits:'鳴謝',foot_terms:'條款及細則',credits_h:'鳴謝',case_en_only:'',
+ cr1_title:'副教授',cr1_aff1:'醫學、牙科與護理學院',cr1_aff2:'格拉斯哥大學',
+ cr2_title:'資深助理教授',cr2_aff1:'電腦科學學院',cr2_aff2:'格拉斯哥大學新加坡分校',
+ dis_title:'開始之前，請先閱讀',
+ dis_p1:'Gentle Truths 是護理教育的概念原型，屬於教學專案，並非臨床產品。',
+ dis_p2:'所有個案與角色均屬虛構，劇本為待臨床審閱的草稿。此處內容並非臨床建議。',
+ dis_p3:'情境涉及嚴重疾病與家人的哀傷，你可以隨時離開對話。',
+ dis_p4:'英文以外的語言版本均由機器翻譯產生，可能有誤譯之處。',
+ dis_remember:'在本次瀏覽期間記住我的選擇',dis_agree:'我同意，繼續',dis_disagree:'我不同意',
+ terms_eyebrow:'法律',terms_h1:'條款及細則',terms_h2:'與使用權聲明',terms_updated:'最後更新：2026 年 10 月 2 日',terms_notice:'本頁面為機器翻譯，如與英文版本有差異，以英文版本為準。',
+ t1_t:'1. 關於本專案',t1_d:'Gentle Truths 是學術性、非商業的概念原型，用於在護理教育中練習嚴重疾病的對話。本專案為 AgeTech Living Lab 而開發，僅供教育、研究及公共利益用途。',
+ t2_t:'2. 僅供教學用途，並非臨床建議',t2_d:'Gentle Truths 是練習工具，並非臨床、醫療、法律或倫理建議的來源。劇本中的回應只代表其中一種溝通方式，並非唯一可接受的做法。真實的病人與家屬各有不同，實際決定必須依循你所屬機構的政策及合資格臨床人員的指引。情境涉及嚴重疾病與哀傷；如有需要，請隨時抽身休息，並向同事、督導或輔導員尋求支持。',
+ t3_t:'3. 虛構個案',t3_d:'所有個案、角色、分數及全班數據均屬虛構或合成。如與真實人物有任何相似，純屬巧合。臨床內容仍為草稿，尚未經護理同事審閱。',
+ t4_t:'4. 私隱',t4_d:'Gentle Truths 沒有登入、追蹤或錄製功能。你的選擇與分數只保留在瀏覽器中，關閉或重新載入頁面後即會消失。本頁面會從 Google Fonts 載入字型，Google 可能會依其自身條款接收你的 IP 位址。你選擇記住本同意聲明，僅會儲存在瀏覽器的工作階段儲存空間中。',
+ t5_t:'5. 不作保證',t5_d:'我們已盡力使內容準確而恰當，但不保證其完整性、準確性、可靠性或適用於任何特定用途。Gentle Truths 按「現狀」及「可用狀態」提供，不附帶任何明示或默示的保證。',
+ t6_t:'6. 責任限制',t6_d:'在法律允許的最大範圍內，專案團隊、貢獻者、教師及相關機構，對於你使用或依賴本原型所引致的任何損失、傷害或不良後果，概不負責。你須自行承擔使用風險。',
+ t7_t:'7. 使用權',t7_d:'本原型的原始碼已公開於 GitHub，供學術及非商業再利用（授權詳情請見專案儲存庫）。個案劇本與教練回饋文字僅供教學；如加以改編，請註明專案及其作者，並請勿將其當作臨床指引。',
+ t8_t:'8. 條款更新',t8_d:'隨著專案發展，我們可能不時更新本頁面。條款更新後繼續使用 Gentle Truths，即表示你接受修訂後的條款。',
+ t9_t:'9. 語言與翻譯',t9_d:'英文是本原型的原始及具權威的語言。繁體中文、简体中文、Bahasa Melayu 及 தமிழ் 均由機器翻譯產生，未經人手翻譯審閱。機器翻譯的文字可能有錯誤、遺漏或誤譯，不應作為臨床或法律決定的依據。個案劇本目前提供英文與繁體中文（簡體中文由繁體文字轉換而成），馬來文與坦米爾文則顯示英文劇本。如有任何差異，以英文版本為準。'
+},
+ms:{
+ nav_cases:'Kes',nav_edu:'Paparan pendidik',nav_safe:'Perlindungan',nav_credits:'Penghargaan',leave:'Tinggalkan perbualan',
+ h1:'Berlatihlah perbualan yang tiada siapa mahu lalui, sebelum yang sebenar.',
+ lede:'Berbual dengan ahli keluarga atau pesakit yang bimbang dalam babak berskrip. Setiap ayat yang anda pilih mengubah kepercayaan, ketegangan dan kefahaman, dan anda boleh melihatnya berlaku.',
+ cta:'Mulakan perbualan',cta2:'Lihat paparan pendidik',
+ fine:'Kes rekaan untuk pendidikan. Tiada apa yang anda lakukan di sini dirakam.',
+ cases_h:'Pilih kes',dur:'Kira-kira 6 minit',ex:'5 pertukaran',start:'Mulakan kes ini',
+ why_h:'Cara ia dibina',
+ why1_t:'Berskrip dengan sengaja',why1_d:'Setiap ayat yang dibaca pelajar ditulis oleh manusia dan boleh disemak sebelum digunakan. Tiada AI yang berimprovisasi di hadapan pelajar.',
+ why2_t:'Dwibahasa sejak ayat pertama',why2_d:'Kes ditulis untuk struktur keluarga dan cara bertutur yang dikenali pelajar di Singapura, dalam bahasa Inggeris dan Cina Tradisional.',
+ why3_t:'Setiap sesi turut mengajar pendidik',why3_d:'Dalam versi penuh, pilihan dikumpulkan tanpa nama supaya pendidik dapat melihat detik yang paling sukar bagi seluruh kohort. Paparan pendidik menunjukkan caranya.',
+ foot:'Prototaip konsep untuk AgeTech Living Lab. Semua kes dan data yang dipaparkan adalah rekaan, dan kandungan klinikal masih menunggu semakan rakan jururawat.',
+ scene_note:'Kes ini melibatkan penyakit serius dan kesedihan keluarga. Anda boleh keluar pada bila-bila masa.',
+ notice:'Anda perasan:',trust:'Kepercayaan',tension:'Ketegangan',understand:'Kefahaman',calmer:'Ketegangan yang lebih rendah bermaksud lebih tenang.',
+ choose_h:'Apa yang anda katakan?',cont:'Teruskan',finish:'Tamatkan perbualan',debrief_btn:'Lihat taklimat',
+ pill_s:'Langkah kukuh',pill_w:'Peluang terlepas',
+ tw4:'Sangat tegang',tw3:'Tegang',tw2:'Berjaga-jaga',tw1:'Mula reda',tw0:'Tenang',temp_l:'Bacaan suasana',
+ deb_h:'Taklimat perbualan',ended:'Bagaimana ia berakhir',overall:'keseluruhan',skills_h:'Kemahiran',flow_h:'Bagaimana suasana berubah',
+ moments_h:'Detik penting',youSaid:'Anda berkata',stronger:'Pilihan yang lebih kukuh',retry:'Cuba kes ini sekali lagi',other:'Pilih kes lain',startlbl:'Mula',
+ sk_empathy:'Empati',sk_info:'Berkongsi maklumat',sk_values:'Meneroka nilai',sk_family:'Keluarga dan budaya',sk_honesty:'Kejelasan yang jujur',
+ edu_h:'Paparan pendidik',edu_note:'Data ilustrasi daripada 48 pelajar sintetik. Tiada pelajar sebenar diwakili.',
+ edu_skills:'Kemahiran kohort, kes strok',edu_wrong:'Di mana perbualan menjadi tersasar',edu_dist:'Taburan skor (48 pelajar)',
+ edu_data_h:'Kes ialah data, bukan kod',edu_data_p:'Seorang klinisian boleh menulis kes baharu dengan mengisi struktur ini: apa yang diperkatakan orang itu, apa yang boleh dijawab pelajar, dan bagaimana setiap jawapan mengubah suasana. Tiada pengaturcaraan diperlukan.',
+ safe_h:'Perlindungan',
+ s1_t:'Berskrip, bukan generatif',s1_d:'Setiap ayat ditulis oleh manusia dan boleh disemak sebelum pelajar melihatnya. Tiada AI yang berimprovisasi dalam babak.',
+ s2_t:'Tiada data peribadi',s2_d:'Tiada log masuk, tiada penjejakan dan tiada rakaman. Tiada apa yang anda lakukan dalam prototaip ini keluar dari peranti anda.',
+ s3_t:'Pemarkahan telus',s3_d:'Skor datang daripada rubrik bertulis yang dilampirkan pada setiap jawapan. Tiada apa yang tersembunyi dalam model, jadi setiap mata boleh dijejak dan dipersoalkan.',
+ s4_t:'Keselamatan emosi',s4_d:'Setiap kes bermula dengan nota kandungan. Pelajar boleh keluar pada bila-bila masa, dan taklimat menyusuli setiap sesi.',
+ s5_t:'Semakan klinikal',s5_d:'Semua kes dalam prototaip ini ialah draf yang ditulis untuk demonstrasi.',s5_r:'Semakan kandungan klinikal oleh rakan jururawat: belum selesai. Penyemak dan tarikh akan direkodkan di sini.',
+ s6_t:'Budaya dan konteks',s6_d:'Kes adalah rekaan dan ditulis untuk konteks keluarga Singapura. Ia bertujuan dibangunkan bersama klinisian dan keluarga tempatan, bukan diandaikan.',
+ s_edu:'Untuk kegunaan pendidikan sahaja. Bukan nasihat klinikal.',
+ foot_terms:'Terma & Syarat',credits_h:'Penghargaan',case_en_only:'Skrip kes dipaparkan dalam bahasa Inggeris buat masa ini.',
+ cr1_title:'Profesor Madya',cr1_aff1:'Sekolah Perubatan, Pergigian & Kejururawatan',cr1_aff2:'Universiti Glasgow',
+ cr2_title:'Profesor Penolong Kanan',cr2_aff1:'Sekolah Sains Komputer',cr2_aff2:'Universiti Glasgow Singapura',
+ dis_title:'Sebelum anda bermula',
+ dis_p1:'Gentle Truths ialah prototaip konsep untuk pendidikan kejururawatan. Ia projek pembelajaran dan pengajaran, bukan produk klinikal.',
+ dis_p2:'Semua kes dan watak adalah rekaan dan skrip merupakan draf yang menunggu semakan klinikal. Tiada apa di sini merupakan nasihat klinikal.',
+ dis_p3:'Babak ini berkaitan penyakit serius dan kesedihan keluarga. Anda boleh meninggalkan perbualan pada bila-bila masa.',
+ dis_p4:'Bahasa selain bahasa Inggeris diterjemahkan secara automatik oleh mesin dan mungkin mengandungi kesilapan.',
+ dis_remember:'Ingat pilihan saya untuk sesi ini',dis_agree:'Saya Setuju, Teruskan',dis_disagree:'Saya Tidak Setuju',
+ terms_eyebrow:'Undang-undang',terms_h1:'Terma & Syarat',terms_h2:'dan pernyataan hak penggunaan',terms_updated:'Dikemas kini 2 Oktober 2026',terms_notice:'Halaman ini diterjemahkan oleh mesin. Jika terdapat percanggahan, versi bahasa Inggeris diutamakan.',
+ t1_t:'1. Tentang projek ini',t1_d:'Gentle Truths ialah prototaip konsep akademik dan bukan komersial untuk berlatih perbualan penyakit serius dalam pendidikan kejururawatan. Ia dibangunkan untuk AgeTech Living Lab dan disediakan untuk tujuan pendidikan, penyelidikan dan faedah awam sahaja.',
+ t2_t:'2. Kegunaan pendidikan sahaja, bukan nasihat klinikal',t2_d:'Gentle Truths ialah alat latihan, bukan sumber nasihat klinikal, perubatan, undang-undang atau etika. Jawapan berskrip mencerminkan satu pendekatan komunikasi dan bukan satu-satunya yang boleh diterima. Pesakit dan keluarga sebenar berbeza-beza, dan keputusan sebenar mesti mengikut dasar institusi anda serta panduan klinisian yang berkelayakan. Babak melibatkan penyakit serius dan kesedihan; berundurlah pada bila-bila masa jika perlu, dan dapatkan sokongan daripada rakan sekerja, penyelia atau kaunselor.',
+ t3_t:'3. Kes rekaan',t3_d:'Semua kes, watak, skor dan data kohort adalah rekaan atau sintetik. Sebarang persamaan dengan orang sebenar adalah kebetulan. Kandungan klinikal masih draf dan belum disemak oleh rakan jururawat.',
+ t4_t:'4. Privasi',t4_d:'Gentle Truths tidak mempunyai log masuk, penjejakan atau rakaman. Pilihan dan skor anda kekal dalam pelayar anda dan hilang apabila anda menutup atau memuat semula halaman. Halaman ini memuatkan fon daripada Google Fonts, yang mungkin menerima alamat IP anda mengikut terma Google sendiri. Pilihan anda untuk mengingati persetujuan ini disimpan dalam storan sesi pelayar anda sahaja.',
+ t5_t:'5. Tiada jaminan',t5_d:'Kami telah berusaha menjadikan kandungan ini tepat dan sesuai, tetapi kami tidak menjamin kelengkapan, ketepatan, kebolehpercayaan atau kesesuaiannya untuk sebarang tujuan. Gentle Truths disediakan “seadanya” dan “sebagaimana tersedia”, tanpa sebarang jaminan, tersurat atau tersirat.',
+ t6_t:'6. Had liabiliti',t6_d:'Setakat yang dibenarkan oleh undang-undang, pasukan projek, penyumbang, fakulti dan institusi bersekutu tidak menerima liabiliti bagi sebarang kerugian, kemudaratan atau akibat buruk yang timbul daripada penggunaan atau pergantungan anda pada prototaip ini. Anda menggunakannya atas risiko sendiri.',
+ t7_t:'7. Hak penggunaan',t7_d:'Kod sumber prototaip ini diterbitkan di GitHub untuk penggunaan semula akademik dan bukan komersial (lihat repositori projek untuk butiran lesen). Skrip kes dan teks bimbingan disediakan untuk pengajaran. Sila kreditkan projek dan penulisnya jika anda mengadaptasinya, dan jangan mempersembahkannya sebagai panduan klinikal.',
+ t8_t:'8. Perubahan pada terma ini',t8_d:'Kami boleh mengemas kini halaman ini dari semasa ke semasa apabila projek berkembang. Penggunaan Gentle Truths yang berterusan selepas perubahan disiarkan bermakna anda menerima terma yang disemak.',
+ t9_t:'9. Bahasa dan terjemahan',t9_d:'Bahasa Inggeris ialah bahasa asal dan berautoriti bagi prototaip ini. 繁體中文, 简体中文, Bahasa Melayu dan தமிழ் dihasilkan melalui terjemahan mesin dan belum disemak oleh penterjemah manusia. Teks terjemahan mesin mungkin mengandungi kesilapan, peninggalan atau salah terjemah dan tidak boleh dijadikan bahan rujukan bagi keputusan klinikal atau undang-undang. Skrip kes kini tersedia dalam bahasa Inggeris dan Cina Tradisional (Cina Ringkas ditukar daripada teks Tradisional), manakala bahasa Melayu dan Tamil memaparkan skrip bahasa Inggeris. Jika terdapat sebarang percanggahan, versi bahasa Inggeris diutamakan.'
+},
+ta:{
+ nav_cases:'வழக்குகள்',nav_edu:'கல்வியாளர் பார்வை',nav_safe:'பாதுகாப்புகள்',nav_credits:'நன்றியுரை',leave:'உரையாடலை விட்டு வெளியேறு',
+ h1:'உண்மையான உரையாடலுக்கு முன், யாரும் விரும்பாத உரையாடல்களைப் பயிற்சி செய்யுங்கள்.',
+ lede:'திரைக்கதை அமைக்கப்பட்ட காட்சியில் கவலையுடன் இருக்கும் குடும்ப உறுப்பினர் அல்லது நோயாளியுடன் உரையாடுங்கள். நீங்கள் தேர்ந்தெடுக்கும் ஒவ்வொரு வாக்கியமும் நம்பிக்கை, பதற்றம், புரிதல் ஆகியவற்றை மாற்றும்; அதை நீங்களே பார்க்கலாம்.',
+ cta:'உரையாடலைத் தொடங்குங்கள்',cta2:'கல்வியாளர் பார்வையைப் பாருங்கள்',
+ fine:'கல்விக்கான கற்பனை வழக்குகள். இங்கு நீங்கள் செய்வது எதுவும் பதிவு செய்யப்படாது.',
+ cases_h:'ஒரு வழக்கைத் தேர்ந்தெடுங்கள்',dur:'சுமார் 6 நிமிடங்கள்',ex:'5 பரிமாற்றங்கள்',start:'இந்த வழக்கைத் தொடங்குங்கள்',
+ why_h:'இது எவ்வாறு உருவாக்கப்பட்டது',
+ why1_t:'வேண்டுமென்றே திரைக்கதை அமைப்பு',why1_d:'கற்பவர் படிக்கும் ஒவ்வொரு வரியும் மனிதர்களால் எழுதப்பட்டது; பயன்படுத்துவதற்கு முன் மதிப்பாய்வு செய்யலாம். மாணவர்கள் முன் எந்த AI-யும் தானாக உருவாக்குவதில்லை.',
+ why2_t:'முதல் வரியிலிருந்தே இருமொழி',why2_d:'சிங்கப்பூரில் உள்ள கற்பவர்கள் அறிந்த குடும்ப அமைப்புகளுக்கும் பேசும் முறைகளுக்கும் ஏற்ப, ஆங்கிலத்திலும் பாரம்பரிய சீன மொழியிலும் வழக்குகள் எழுதப்பட்டுள்ளன.',
+ why3_t:'ஒவ்வொரு அமர்வும் கல்வியாளருக்கும் கற்றுத் தருகிறது',why3_d:'முழுப் பதிப்பில், தேர்வுகள் பெயர் குறிப்பிடாமல் திரட்டப்படுகின்றன; இதனால் முழு குழுவுக்கும் எந்தத் தருணங்கள் மிகக் கடினம் என்பதை கல்வியாளர்கள் காணலாம். கல்வியாளர் பார்வை இதை விளக்குகிறது.',
+ foot:'AgeTech Living Lab-க்கான கருத்துரு முன்மாதிரி. காட்டப்படும் அனைத்து வழக்குகளும் தரவுகளும் கற்பனையானவை; மருத்துவ உள்ளடக்கம் செவிலியர் சகாக்களின் மதிப்பாய்வுக்குக் காத்திருக்கிறது.',
+ scene_note:'இந்த வழக்கு கடுமையான நோய் மற்றும் குடும்பத்தின் துயரம் தொடர்புடையது. நீங்கள் எப்போது வேண்டுமானாலும் வெளியேறலாம்.',
+ notice:'நீங்கள் கவனிப்பது:',trust:'நம்பிக்கை',tension:'பதற்றம்',understand:'புரிதல்',calmer:'குறைந்த பதற்றம் என்பது அமைதியான சூழல்.',
+ choose_h:'நீங்கள் என்ன சொல்வீர்கள்?',cont:'தொடரவும்',finish:'உரையாடலை முடிக்கவும்',debrief_btn:'மறுஆய்வைப் பாருங்கள்',
+ pill_s:'வலுவான நடவடிக்கை',pill_w:'தவறவிட்ட வாய்ப்பு',
+ tw4:'மிகுந்த பதற்றம்',tw3:'பதற்றம்',tw2:'எச்சரிக்கை',tw1:'தணிகிறது',tw0:'அமைதி',temp_l:'சூழல் நிலை',
+ deb_h:'உரையாடல் மறுஆய்வு',ended:'எவ்வாறு முடிந்தது',overall:'மொத்தம்',skills_h:'திறன்கள்',flow_h:'சூழல் எவ்வாறு மாறியது',
+ moments_h:'முக்கியத் தருணங்கள்',youSaid:'நீங்கள் சொன்னது',stronger:'இன்னும் வலுவான தேர்வு',retry:'இந்த வழக்கை மீண்டும் முயலுங்கள்',other:'வேறு வழக்கைத் தேர்ந்தெடுங்கள்',startlbl:'தொடக்கம்',
+ sk_empathy:'பரிவு',sk_info:'தகவல் பகிர்தல்',sk_values:'மதிப்புகளை ஆராய்தல்',sk_family:'குடும்பமும் பண்பாடும்',sk_honesty:'நேர்மையான தெளிவு',
+ edu_h:'கல்வியாளர் பார்வை',edu_note:'48 செயற்கைக் கற்பவர்களின் எடுத்துக்காட்டுத் தரவு. உண்மையான கற்பவர்கள் யாரும் குறிக்கப்படவில்லை.',
+ edu_skills:'குழுவின் திறன்கள், பக்கவாத வழக்கு',edu_wrong:'உரையாடல்கள் எங்கே தவறுகின்றன',edu_dist:'மதிப்பெண் பரவல் (48 கற்பவர்கள்)',
+ edu_data_h:'வழக்குகள் தரவு, நிரல் அல்ல',edu_data_p:'இந்த அமைப்பை நிரப்பி மருத்துவப் பணியாளர் புதிய வழக்கை எழுதலாம்: அந்த நபர் என்ன சொல்கிறார், கற்பவர் என்ன பதிலளிக்கலாம், ஒவ்வொரு பதிலும் சூழலை எவ்வாறு மாற்றுகிறது. நிரலாக்கம் தேவையில்லை.',
+ safe_h:'பாதுகாப்புகள்',
+ s1_t:'திரைக்கதை அடிப்படை, உருவாக்கும் AI அல்ல',s1_d:'ஒவ்வொரு வரியும் மனிதர்களால் எழுதப்பட்டது; கற்பவர்கள் காண்பதற்கு முன் மதிப்பாய்வு செய்யலாம். காட்சிகளில் எந்த AI-யும் தானாக உருவாக்குவதில்லை.',
+ s2_t:'தனிப்பட்ட தரவு இல்லை',s2_d:'உள்நுழைவு இல்லை, கண்காணிப்பு இல்லை, பதிவு இல்லை. இந்த முன்மாதிரியில் நீங்கள் செய்வது எதுவும் உங்கள் சாதனத்தை விட்டு வெளியேறாது.',
+ s3_t:'வெளிப்படையான மதிப்பீடு',s3_d:'ஒவ்வொரு பதிலுடனும் இணைக்கப்பட்ட எழுத்து வடிவ மதிப்பீட்டு அளவுகோலிலிருந்து மதிப்பெண்கள் வருகின்றன. மாதிரிக்குள் எதுவும் மறைந்திருக்கவில்லை; ஒவ்வொரு புள்ளியையும் கண்டறியவும் கேள்வி எழுப்பவும் முடியும்.',
+ s4_t:'உணர்வுப் பாதுகாப்பு',s4_d:'ஒவ்வொரு வழக்கும் உள்ளடக்கக் குறிப்புடன் தொடங்குகிறது. கற்பவர்கள் எப்போது வேண்டுமானாலும் வெளியேறலாம்; ஒவ்வொரு அமர்வுக்குப் பிறகும் மறுஆய்வு உண்டு.',
+ s5_t:'மருத்துவ மதிப்பாய்வு',s5_d:'இந்த முன்மாதிரியில் உள்ள அனைத்து வழக்குகளும் செயல்விளக்கத்திற்காக எழுதப்பட்ட வரைவுகள்.',s5_r:'செவிலியர் சகாக்களின் மருத்துவ உள்ளடக்க மதிப்பாய்வு: நிலுவையில் உள்ளது. மதிப்பாய்வாளர் மற்றும் தேதி இங்கே பதிவு செய்யப்படும்.',
+ s6_t:'பண்பாடும் சூழலும்',s6_d:'வழக்குகள் கற்பனையானவை; சிங்கப்பூர் குடும்பச் சூழலுக்கு ஏற்ப எழுதப்பட்டவை. அவற்றை ஊகிக்காமல், உள்ளூர் மருத்துவப் பணியாளர்கள் மற்றும் குடும்பங்களுடன் இணைந்து உருவாக்க வேண்டும்.',
+ s_edu:'கல்விப் பயன்பாட்டுக்கு மட்டும். மருத்துவ ஆலோசனை அல்ல.',
+ foot_terms:'விதிமுறைகள் & நிபந்தனைகள்',credits_h:'நன்றியுரை',case_en_only:'வழக்கு உரைகள் தற்போது ஆங்கிலத்தில் காட்டப்படுகின்றன.',
+ cr1_title:'இணைப் பேராசிரியர்',cr1_aff1:'மருத்துவம், பல் மருத்துவம் மற்றும் நர்சிங் பள்ளி',cr1_aff2:'கிளாஸ்கோ பல்கலைக்கழகம்',
+ cr2_title:'மூத்த உதவிப் பேராசிரியர்',cr2_aff1:'கணினியியல் பள்ளி',cr2_aff2:'கிளாஸ்கோ பல்கலைக்கழகம் சிங்கப்பூர்',
+ dis_title:'தொடங்குவதற்கு முன்',
+ dis_p1:'Gentle Truths என்பது செவிலியர் கல்விக்கான கருத்துரு முன்மாதிரி. இது கற்றல், கற்பித்தல் திட்டம்; மருத்துவத் தயாரிப்பு அல்ல.',
+ dis_p2:'அனைத்து வழக்குகளும் கதாபாத்திரங்களும் கற்பனையானவை; உரைகள் மருத்துவ மதிப்பாய்வுக்குக் காத்திருக்கும் வரைவுகள். இங்குள்ள எதுவும் மருத்துவ ஆலோசனை அல்ல.',
+ dis_p3:'காட்சிகள் கடுமையான நோய் மற்றும் குடும்பத்தின் துயரம் தொடர்பானவை. நீங்கள் எப்போது வேண்டுமானாலும் உரையாடலை விட்டு வெளியேறலாம்.',
+ dis_p4:'ஆங்கிலம் தவிர்த்த மொழிகள் இயந்திர மொழிபெயர்ப்பால் தரப்பட்டவை; அவற்றில் பிழைகள் இருக்கக்கூடும்.',
+ dis_remember:'இந்த அமர்வுக்கு எனது தேர்வை நினைவில் வையுங்கள்',dis_agree:'நான் ஒப்புக்கொள்கிறேன், தொடரவும்',dis_disagree:'நான் ஒப்புக்கொள்ளவில்லை',
+ terms_eyebrow:'சட்டம்',terms_h1:'விதிமுறைகள் & நிபந்தனைகள்',terms_h2:'மற்றும் பயன்பாட்டு உரிமை அறிவிப்பு',terms_updated:'கடைசியாகப் புதுப்பிக்கப்பட்டது: 2 அக்டோபர் 2026',terms_notice:'இந்தப் பக்கம் இயந்திர மொழிபெயர்ப்பு. முரண்பாடு இருந்தால் ஆங்கில பதிப்பே மேலோங்கும்.',
+ t1_t:'1. இந்தத் திட்டம் பற்றி',t1_d:'Gentle Truths என்பது செவிலியர் கல்வியில் கடுமையான நோய் குறித்த உரையாடல்களைப் பயிற்சி செய்வதற்கான கல்விசார், வணிகநோக்கற்ற கருத்துரு முன்மாதிரி. இது AgeTech Living Lab-க்காக உருவாக்கப்பட்டது; கல்வி, ஆராய்ச்சி, பொதுநலன் நோக்கங்களுக்காக மட்டுமே வழங்கப்படுகிறது.',
+ t2_t:'2. கல்விப் பயன்பாட்டுக்கு மட்டும், மருத்துவ ஆலோசனை அல்ல',t2_d:'Gentle Truths ஒரு பயிற்சிக் கருவி; மருத்துவ, சட்ட அல்லது நெறிமுறை ஆலோசனைக்கான ஆதாரம் அல்ல. திரைக்கதை அமைக்கப்பட்ட பதில்கள் தகவல்தொடர்புக்கான ஒரு அணுகுமுறையை மட்டுமே பிரதிபலிக்கின்றன; அது மட்டுமே ஏற்கத்தக்கது அல்ல. உண்மையான நோயாளிகளும் குடும்பங்களும் வேறுபடுவர்; உண்மையான முடிவுகள் உங்கள் நிறுவனத்தின் கொள்கைகளையும் தகுதிவாய்ந்த மருத்துவப் பணியாளர்களின் வழிகாட்டுதலையும் பின்பற்ற வேண்டும். காட்சிகள் கடுமையான நோய் மற்றும் துயரம் தொடர்பானவை; தேவைப்படும்போது எப்போது வேண்டுமானாலும் விலகிக் கொள்ளுங்கள்; சக ஊழியர், மேற்பார்வையாளர் அல்லது ஆலோசகரிடம் ஆதரவு பெறுங்கள்.',
+ t3_t:'3. கற்பனை வழக்குகள்',t3_d:'அனைத்து வழக்குகள், கதாபாத்திரங்கள், மதிப்பெண்கள், குழுத் தரவுகள் கற்பனையானவை அல்லது செயற்கையானவை. உண்மையான நபர்களுடன் ஏதேனும் ஒற்றுமை இருந்தால் அது தற்செயலானது. மருத்துவ உள்ளடக்கம் வரைவு நிலையில் உள்ளது; செவிலியர் சகாக்களால் இன்னும் மதிப்பாய்வு செய்யப்படவில்லை.',
+ t4_t:'4. தனியுரிமை',t4_d:'Gentle Truths-இல் உள்நுழைவு, கண்காணிப்பு, பதிவு எதுவும் இல்லை. உங்கள் தேர்வுகளும் மதிப்பெண்களும் உங்கள் உலாவியிலேயே இருக்கும்; பக்கத்தை மூடினாலோ மீண்டும் ஏற்றினாலோ இழக்கப்படும். இந்தப் பக்கம் Google Fonts-இலிருந்து எழுத்துருக்களை ஏற்றுகிறது; Google-இன் சொந்த விதிமுறைகளின்படி உங்கள் IP முகவரி அதற்குக் கிடைக்கக்கூடும். இந்த ஒப்புதலை நினைவில் வைத்திருக்கும் உங்கள் தேர்வு, உங்கள் உலாவியின் அமர்வுச் சேமிப்பகத்தில் மட்டுமே வைக்கப்படும்.',
+ t5_t:'5. உத்தரவாதம் இல்லை',t5_d:'உள்ளடக்கத்தைச் சரியானதாகவும் பொருத்தமானதாகவும் வைக்க முயன்றுள்ளோம்; ஆனால் அதன் முழுமை, துல்லியம், நம்பகத்தன்மை அல்லது எந்தவொரு நோக்கத்துக்கும் ஏற்றதன்மைக்கு நாங்கள் உத்தரவாதம் அளிக்கவில்லை. Gentle Truths “உள்ளவாறே” மற்றும் “கிடைக்கும்படியே” வழங்கப்படுகிறது; வெளிப்படையான அல்லது மறைமுகமான எந்த உத்தரவாதமும் இல்லை.',
+ t6_t:'6. பொறுப்புக் கட்டுப்பாடு',t6_d:'சட்டம் அனுமதிக்கும் அதிகபட்ச அளவுக்கு, திட்டக் குழு, பங்களிப்பாளர்கள், பீடம் மற்றும் இணைந்த நிறுவனங்கள், இந்த முன்மாதிரியை நீங்கள் பயன்படுத்துவதாலோ அதைச் சார்ந்திருப்பதாலோ ஏற்படும் எந்த இழப்புக்கும், தீங்குக்கும், விளைவுக்கும் பொறுப்பேற்காது. இதை உங்கள் சொந்தப் பொறுப்பில் பயன்படுத்துகிறீர்கள்.',
+ t7_t:'7. பயன்பாட்டு உரிமை',t7_d:'இந்த முன்மாதிரியின் மூலக் குறியீடு கல்விசார், வணிகநோக்கற்ற மறுபயன்பாட்டுக்காக GitHub-இல் வெளியிடப்பட்டுள்ளது (உரிம விவரங்களுக்குத் திட்டக் களஞ்சியத்தைப் பார்க்கவும்). வழக்கு உரைகளும் வழிகாட்டும் உரைகளும் கற்பித்தலுக்காக வழங்கப்படுகின்றன. அவற்றைத் தழுவினால் திட்டத்தையும் அதன் ஆசிரியர்களையும் குறிப்பிடுங்கள்; அவற்றை மருத்துவ வழிகாட்டுதலாக முன்வைக்க வேண்டாம்.',
+ t8_t:'8. இந்த விதிமுறைகளில் மாற்றங்கள்',t8_d:'திட்டம் வளரும்போது இந்தப் பக்கத்தை அவ்வப்போது புதுப்பிக்கலாம். மாற்றங்கள் வெளியிடப்பட்ட பிறகும் Gentle Truths-ஐப் பயன்படுத்தினால், திருத்தப்பட்ட விதிமுறைகளை ஏற்றுக்கொண்டதாகக் கருதப்படும்.',
+ t9_t:'9. மொழியும் மொழிபெயர்ப்பும்',t9_d:'ஆங்கிலமே இந்த முன்மாதிரியின் மூல மற்றும் அதிகாரப்பூர்வ மொழி. 繁體中文, 简体中文, Bahasa Melayu, தமிழ் ஆகியவை இயந்திர மொழிபெயர்ப்பால் உருவாக்கப்பட்டவை; மனித மொழிபெயர்ப்பாளரால் மதிப்பாய்வு செய்யப்படவில்லை. இயந்திர மொழிபெயர்ப்பு உரையில் பிழைகள், விடுபடல்கள், தவறான மொழிபெயர்ப்புகள் இருக்கக்கூடும்; மருத்துவ அல்லது சட்ட முடிவுகளுக்கு அதை நம்பக்கூடாது. வழக்கு உரைகள் தற்போது ஆங்கிலம் மற்றும் பாரம்பரிய சீன மொழியில் (எளிய சீன மொழி பாரம்பரிய உரையிலிருந்து மாற்றப்பட்டது) உள்ளன; மலாய், தமிழ் மொழிகளில் ஆங்கில உரைகள் காட்டப்படும். ஏதேனும் முரண்பாடு இருந்தால் ஆங்கில பதிப்பே மேலோங்கும்.'
+}};
+Object.assign(UI.en,NEW.en);
+UI['zh-Hant']=Object.assign(UI.zh,NEW.zh);delete UI.zh;
+UI['zh-Hans']=Object.fromEntries(Object.entries(UI['zh-Hant']).map(([k,v])=>[k,simp(v)]));
+UI.ms=NEW.ms;UI.ta=NEW.ta;
+const LANGS=[['en','EN','English'],['zh-Hant','繁中','繁體中文'],['zh-Hans','简中','简体中文'],['ms','BM','Bahasa Melayu'],['ta','த','தமிழ்']];
+
+/* ---------- case content (drafts, pending clinical review) ---------- */
+const CASES={
+stroke:{
+ id:'stroke',
+ title:t('After a major stroke','大面積中風之後'),
+ teaser:t('Mdm Lim, 82, cannot swallow safely and is not fully awake. Her daughter is exhausted, her brother abroad wants everything done, and a feeding tube decision is coming.','林太（82歲）吞嚥不安全，意識也未完全清醒。女兒心力交瘁，海外的哥哥要求「全力搶救」，而餵食管的決定迫在眉睫。'),
+ setting:t('Family room, acute stroke ward, day 6','急性中風病房家屬室，第六日'),
+ intro:t('You are the ward nurse. Mdm Lim, 82, had a large stroke six days ago and cannot yet swallow safely. Her daughter Jenny has asked for a few minutes with you.','你是病房護士。林太（82歲）六天前發生大面積中風，目前還不能安全吞嚥。她的女兒 Jenny 想和你談幾分鐘。'),
+ npc:{name:t('Jenny Lim','Jenny Lim'),role:t('Daughter, 52','女兒，52歲'),init:'J'},
+ start:{trust:30,distress:70,understand:20},
+ ends:{
+  hi:t(`"Thank you for staying with me. I think... I think I can talk to my brother now."`,`「謝謝你陪著我。我想……我現在可以跟我哥哥談了。」`),
+  mid:t(`"Okay. I'll think about it. Thanks for explaining."`,`「好吧，我會想一想。謝謝你解釋。」`),
+  lo:t(`"I'd like to speak to someone else, please."`,`「我想跟別的人談談。」`)},
+ turns:[
+ {npc:t(`I've been here since five this morning. Every doctor says something different. Can someone please just tell me what is actually happening to my mum?`,`我早上五點就在這裡了。每個醫生說的都不一樣。可不可以有人直接告訴我，我媽媽到底怎麼了？`),
+  cue:t('Jenny looks exhausted and frustrated, and she is asking for a straight answer.','Jenny 看起來疲憊而沮喪，她想要一個直接的答案。'),
+  opts:[
+   o(t(`I understand it's hard. The doctors are very busy, but they are all doing their best. Let's wait for the ward round.`,`我明白這很辛苦。醫生們都很忙，但他們都已經盡力了。我們等查房的時候再說吧。`),t('Deflecting','迴避'),[-8,6,0],{},'weak',t('Generic reassurance, and the question is passed to someone else. Jenny asked something direct and got nothing back.','泛泛的安慰，又把問題推給別人。Jenny 問得很直接，卻什麼也沒得到。')),
+   o(t(`You've been carrying so much, and getting different messages on top of it must be exhausting. I'd like to go through where things stand, one step at a time. What have you understood so far?`,`你一直扛著這麼多，還要面對各種不同的說法，一定很累。我想一步一步跟你說明現在的情況。到目前為止，你了解到什麼？`),t('Names the feeling, asks first','點出感受，先問對方'),[14,-10,6],{empathy:2,info:2},'strong',t('You named the exhaustion, then invited her own picture before telling. That is ask, tell, ask in action.','你先說出她的疲憊，再邀請她說出所知，然後才解釋。這就是「先問、再說、再確認」。')),
+   o(t(`Your mother had a large left MCA infarct with mass effect on the MRI, reduced GCS and dysphagia, so the prognosis is guarded.`,`你母親的核磁共振顯示左側大腦中動脈大面積梗塞並有佔位效應，格拉斯哥昏迷指數下降，出現吞嚥困難，所以預後保守。`),t('Jargon overload','專業術語過多'),[-6,10,-4],{},'weak',t('Accurate, but it is a wall of terms. Jenny asked for clarity and received code.','內容正確，卻是一堆術語。Jenny 要的是清楚，你給的卻是密碼。'))
+  ]},
+ {npc:t(`They keep saying "guarded prognosis". What does that actually mean? Is she going to get better?`,`他們一直說「預後保守」。那到底是什麼意思？她會好起來嗎？`),
+  cue:t('Jenny is anxious and needs a straight answer she can hold on to.','Jenny 很焦慮，需要一個可以抓住的坦白答案。'),
+  opts:[
+   o(t(`It means we are worried. The stroke was large, and I think it is unlikely she will return to how she was before. I can't say exactly what will happen, and some people do improve slowly. Would it help if I explained what we are watching for over the next few days?`,`意思是我們很擔心。這次中風範圍很大，我認為她不太可能回復到以前的樣子。我不能確切說會發生什麼，有些人也會慢慢好轉。你想不想我解釋一下，未來幾天我們會留意什麼？`),t('Honest, with room for uncertainty','誠實並保留不確定性'),[10,4,16],{honesty:2,info:2,empathy:1},'strong',t('Clear about the worry, honest about uncertainty, and you offered a next step. Tension rises a little because the truth is heavy, and that is expected.','清楚說出擔憂、坦白不確定性，還提出下一步。緊張度略升，因為事實本來就沉重，這是正常的。')),
+   o(t(`She's a fighter. Lots of patients her age pull through, so let's stay positive.`,`她是個鬥士。很多這個年紀的病人都撐過去了，我們保持正面吧。`),t('False reassurance','虛假安慰'),[-8,-6,-8],{},'weak',t(`It soothes for a moment, but it isn't what the team believes. If the news turns, Jenny will remember that you said this.`,`這句話一時安撫了她，卻不是團隊真正的判斷。若情況轉差，Jenny 會記得你曾這樣說。`)),
+   o(t(`She will most likely not recover. You should prepare yourself for the worst.`,`她很可能不會康復。你要有最壞的心理準備。`),t('Blunt, then silence','直白卻沒有陪伴'),[-10,14,4],{honesty:1},'weak',t('Honest in content, but delivered without warmth or a pause, and with nothing offered afterwards.','內容誠實，但語氣冰冷、沒有停頓，也沒有後續支持。'))
+  ]},
+ {npc:t(`Please don't tell my mum how serious this is. She'll lose the will to live. And my brother in Australia says we must do everything. He's the eldest son, so he decides.`,`請不要告訴我媽媽病得多嚴重，她會失去求生意志的。而且我哥哥在澳洲，他說要盡一切可能搶救。他是長子，由他決定。`),
+  cue:t('Jenny is protective and under pressure from her family.','Jenny 想保護母親，同時承受來自家人的壓力。'),
+  opts:[
+   o(t(`Of course. We'll follow what the family wants and won't say anything to her.`,`當然。我們會照家人的意思，不會跟她說什麼。`),t('Agrees to withhold','答應隱瞞'),[4,-8,-4],{family:1},'weak',t(`It respects the family's protective instinct, but it closes the door on what Mdm Lim herself would want to know. Explore first, before agreeing.`,`這尊重了家人想保護她的心意，卻關上了林太自己想知道什麼的門。先探索，才決定。`)),
+   o(t(`Legally your mother has the right to know everything, and your brother has no say in this.`,`按法律，你母親有權知道一切，而你哥哥在這件事上沒有發言權。`),t('Rigid and dismissive','生硬、否定家人'),[-14,12,0],{},'weak',t(`The principle matters, but leading with the law dismisses how Jenny's family makes decisions and puts her on the defensive.`,`原則很重要，但一開口就搬出法律，等於否定了 Jenny 家庭做決定的方式，她只會更設防。`)),
+   o(t(`It sounds like you want to protect your mum, and that comes from love. Can you tell me how your family usually makes big decisions, and how your mum would want to hear news about her own health?`,`聽起來你很想保護媽媽，這是出於愛。你可以告訴我，你們家通常怎樣做重大決定，以及媽媽希望怎樣得知自己的健康消息嗎？`),t('Respects family, explores her wishes','尊重家庭，並探索她的意願'),[12,-6,6],{empathy:2,family:2,values:1},'strong',t('You honoured the protective instinct and opened a way to hear what Mdm Lim would want, without picking a fight with the family structure.','你肯定了她保護母親的心意，並為「林太自己想怎樣知道病情」打開了空間，又沒有與家庭結構對立。'))
+  ]},
+ {npc:t(`She once told us she never wanted to be "kept alive with tubes", after what happened with my father. But now the team wants to put in a feeding tube. If I say no, am I killing her?`,`她以前說過，經歷了爸爸那次之後，她不想「靠一堆管子維持生命」。但現在醫療團隊想為她插餵食管。如果我說不要，是不是等於我害死她？`),
+  cue:t('Jenny is carrying guilt and grief, and this is the question underneath everything else.','Jenny 承載著內疚與哀傷，這是所有話題底下真正的問題。'),
+  opts:[
+   o(t(`You shouldn't think of it like that. Nobody is killing anyone. A feeding tube is standard care.`,`你不應該這樣想。沒有人害死誰。餵食管是標準做法。`),t('Dismisses the feeling','否定對方感受'),[-10,10,-2],{},'weak',t(`Telling someone not to feel guilty rarely works, and calling the tube "standard" nudges her toward yes without hearing her mother's wish.`,`叫人別內疚通常沒用，而說餵食管是「標準做法」，等於在沒聽過母親意願前就把她推向答應。`)),
+   o(t(`That is a heavy question to carry. Saying no to a tube is not the same as giving up on her. Let's think about what matters most to your mum. What would she say makes a life worth living? Then we can look at what a tube can and cannot do for her.`,`這是一個很沉重的問題。不接受餵食管，並不等於放棄她。我們先想想，對你媽媽來說什麼最重要。她會怎樣形容值得活下去的生活？然後我們再看看餵食管能為她做到什麼、做不到什麼。`),t('Reframes guilt, turns to her values','化解內疚，轉向她的價值觀'),[14,-8,10],{empathy:2,values:2,honesty:1},'strong',t(`You acknowledged the weight, separated the decision from blame, and moved toward the patient's own values. The medical detail follows the values, not the other way round.`,`你承認了她的沉重、把決定與「責怪」分開，並回到病人自己的價值觀。醫療細節是跟著價值觀走，而不是反過來。`)),
+   o(t(`That's a decision for the doctors and your brother. I can't really discuss it.`,`這是醫生和你哥哥的決定。我實在不方便討論。`),t('Steps away','抽身離開'),[-12,8,-4],{},'weak',t('Nurses often hear the real question first. Stepping away here leaves Jenny alone at the moment she needed someone.','護士往往最先聽到真正的問題。在這一刻抽身，讓 Jenny 在最需要人的時候孤單一人。'))
+  ]},
+ {npc:t(`I don't know. I just need some time. What happens now?`,`我不知道。我只是需要一點時間。接下來會怎樣？`),
+  cue:t('Jenny is overwhelmed but a little calmer, and she is asking what support exists.','Jenny 不知所措，但稍微平靜了一些，她在問有什麼支持。'),
+  opts:[
+   o(t(`If we delay the decision her condition may get worse, so please let us know by tomorrow.`,`如果拖延決定，她的情況可能會變差，所以請你明天告訴我們。`),t('Adds pressure','施加壓力'),[-10,10,0],{},'weak',t('Urgency may be real, but leading with a deadline lands as pressure. Offer a path and support first.','時間壓力或許是真的，但一開口就講期限只會變成施壓。先提供路徑與支持。')),
+   o(t(`Take your time. Let me know when you've decided and I'll tell the team.`,`慢慢來。你決定了再告訴我，我會轉告團隊。`),t('Leaves her alone with it','讓她獨自面對'),[-2,2,-2],{empathy:0},'weak',t('Kind in tone, but it hands the whole burden back to Jenny with no plan and no support.','語氣溫和，但等於把全部重擔交還給 Jenny，沒有計劃，也沒有支持。')),
+   o(t(`You don't have to decide alone, or right now. I can arrange a family meeting with the doctor, with your brother on video, and I'll stay with you through it. In the meantime we'll keep your mum comfortable. Is there anything you need right now?`,`你不需要獨自做決定，也不用現在就決定。我可以安排醫生與家人一起開會，讓你哥哥以視訊參加，我會陪你一起面對。這段時間我們會讓你媽媽保持舒適。你現在有沒有什麼需要？`),t('Shared plan, and staying present','共同計劃並陪伴'),[12,-10,8],{family:2,info:1,empathy:1},'strong',t('A concrete next step, the wider family brought in, and you stay present. This is what partnership sounds like.','具體的下一步、把整個家庭納入，並表明你會陪著她。這就是「同行」的說法。'))
+  ]}
+ ]
+},
+copd:{
+ id:'copd',
+ title:t('Advanced COPD, third admission','晚期慢阻肺，第三次入院'),
+ teaser:t('Mr Rahman, 76, is back in hospital for the third time this year. He is tired, frightened at night, and has not told his wife. He wants to be at home with his grandchildren.','Rahman 先生（76歲）今年第三次入院。他疲憊、夜裡害怕，卻沒有告訴太太。他最想做的，是在家陪孫子孫女。'),
+ setting:t('Respiratory ward, evening','呼吸內科病房，傍晚'),
+ intro:t('You are the ward nurse. Mr Rahman, 76, has advanced COPD and is back for his third admission this year. His wife sits by the bed. He has asked if you have a moment.','你是病房護士。Rahman 先生（76歲）患有晚期慢阻肺，今年第三次入院。他的太太坐在床邊。他問你有沒有空聊幾句。'),
+ npc:{name:t('Mr Rahman','Rahman 先生'),role:t('Patient, 76','病人，76歲'),init:'R'},
+ start:{trust:35,distress:60,understand:30},
+ ends:{
+  hi:t(`"All right. Let's do that. And... I think I should tell my wife about the nights."`,`「好，就這樣辦。還有……我想我該告訴太太夜裡的情況。」`),
+  mid:t(`"Alright. I'll think about it."`,`「好吧，我想一想。」`),
+  lo:t(`"I'd rather rest now, please."`,`「我想休息一下，麻煩你了。」`)},
+ turns:[
+ {npc:t(`Third time in hospital this year. I'm tired, nurse. Every time I think I'm getting better, I'm back in here.`,`今年第三次住院了。我累了，護士。每次以為好轉，又回到這裡。`),
+  cue:t('Mr Rahman sounds weary, and he is telling you about the cycle, not asking a medical question.','Rahman 先生聽起來很疲倦，他在說這個反覆的循環，並不是在問醫療問題。'),
+  opts:[
+   o(t(`You're doing well today! Your oxygen is much better than yesterday.`,`你今天狀況很好！血氧比昨天好多了。`),t('Cheerful deflection','用樂觀轉移話題'),[-6,4,0],{},'weak',t('Good news about oxygen, but he just said he is tired of the cycle. Cheerfulness skips past that.','血氧好轉是好消息，但他剛說的是對這個循環感到厭倦。樂觀的語氣跳過了這一點。')),
+   o(t(`That sounds draining, the ups and downs and coming back again. What has been the hardest part for you?`,`聽起來很消耗人，起起伏伏，一次又一次回來。對你來說，最難受的是什麼？`),t('Names the feeling, invites more','點出感受，邀請他多說'),[14,-8,2],{empathy:2,values:1},'strong',t('Short, warm and open. You made room for him to say what is actually hard.','簡短、溫暖而開放。你為他騰出空間，說出真正困難的地方。')),
+   o(t(`It's part of COPD. The main thing is to take your inhalers properly and avoid chest infections.`,`這是慢阻肺的一部分。最重要的是正確使用吸入劑，避免胸部感染。`),t('Explains before listening','未聽先講'),[-8,6,-2],{},'weak',t(`Correct, but it answers a question he didn't ask and the feeling underneath goes unheard.`,`內容正確，卻回答了他沒問的問題，底下的感受沒有被聽見。`))
+  ]},
+ {npc:t(`When I can't breathe at night I'm terrified. I don't tell my wife. Is this how it ends?`,`夜裡喘不過氣的時候，我好害怕。我沒有告訴我太太。這就是結局了嗎？`),
+  cue:t('He has just shared a fear he has kept hidden, and he is asking a direct question.','他剛說出一個一直隱藏的恐懼，並直接問了一個問題。'),
+  opts:[
+   o(t(`Please don't worry. We'll get you through it.`,`請別擔心。我們會幫你度過的。`),t(`A promise we can't keep`,'無法兌現的承諾'),[-6,-4,-6],{},'weak',t('It comforts briefly, but no one can promise that with advanced COPD, and he will notice.','這句話暫時安慰了他，但晚期慢阻肺沒有人能這樣保證，他會察覺的。')),
+   o(t(`COPD is a terminal illness and your lungs will only get worse.`,`慢阻肺是絕症，你的肺功能只會越來越差。`),t('Blunt, and alone','直白但沒有陪伴'),[-10,14,2],{honesty:1},'weak',t('True in part, but it arrives as a verdict, with no acknowledgement of his fear and no help offered.','部分屬實，但像宣判一樣拋出，沒有回應他的恐懼，也沒有提供幫助。')),
+   o(t(`That sounds frightening, and thank you for telling me. COPD is a long-term illness that can get worse over time, and I can't promise how it will go. But the breathlessness at night is something we can work on. What do you understand about where things are heading?`,`這聽起來很可怕，謝謝你告訴我。慢阻肺是長期疾病，可能隨時間惡化，我不能保證會怎樣發展。但夜裡喘不過氣，是我們可以一起想辦法處理的。你對接下來的走向了解多少？`),t('Honest, and offers help with the fear','誠實，並為恐懼提供出路'),[12,-6,12],{empathy:2,honesty:2,info:1},'strong',t('You named the fear, told the truth without a verdict, and offered something practical before asking what he knows.','你點出恐懼、沒有下判決地說出真相，並在詢問他的理解之前先提供實際的幫助。'))
+  ]},
+ {npc:t(`What I want is to be at home with my grandchildren. But what if I end up in emergency again, on a breathing machine? I never want weeks on a machine.`,`我想要的，是在家陪孫子孫女。可是萬一我又進了急症室、要接呼吸機呢？我不想被機器撐上好幾個星期。`),
+  cue:t('He is clear about what matters to him, and a little afraid of how it could go wrong.','他很清楚什麼對自己最重要，也有點害怕情況會變得不如所願。'),
+  opts:[
+   o(t(`Let's not think about that now. Focus on getting better first.`,`我們現在先別想那些。先專心好起來。`),t('Closes the door','關上對話之門'),[-10,6,-4],{},'weak',t('He finally said what he wants. Postponing it tells him this is not a conversation we can have.','他終於說出自己想要什麼。把話題推後，等於告訴他這不是可以談的事。')),
+   o(t(`Thank you for telling me that. It gives us something real to plan around. Being at home with your grandchildren matters a lot, and you don't want long machine support. Would you like to talk through what the options involve, so your wishes can be written down?`,`謝謝你告訴我。這讓我們有實在的東西可以規劃。在家陪孫子孫女對你很重要，而你不想長期依賴機器。你想不想一起了解各種選擇，讓你的意願可以被記錄下來？`),t('Reflects back, offers to plan','回應他的話，並提出規劃'),[12,-8,8],{values:2,empathy:1,info:1},'strong',t('You reflected his priorities back in his own words and offered a next step that keeps him in charge.','你用他自己的話把他的優先事項說回給他聽，並提出讓他掌握主導權的下一步。')),
+   o(t(`Okay, I'll note in your file that you don't want a ventilator.`,`好，我會在你的病歷註明你不想使用呼吸機。`),t('Decides too quickly','太快下結論'),[-4,4,-4],{values:1},'weak',t('It sounds responsive, but it skips the conversation about what he is actually choosing. Preferences need exploring with the doctor before anything is recorded.','聽起來很迅速，卻跳過了「他實際上在選擇什麼」的對話。在任何記錄之前，需要先與醫生一起探索他的意願。'))
+  ]},
+ {speaker:{name:t('Mdm Aisha','Aisha 女士'),role:t('Wife, 72','太太，72歲'),init:'A'},
+  npc:t(`He always says that. I can't even imagine it. Surely the doctor should just decide?`,`他總是這樣說。我連想都不敢想。醫生應該直接決定才對吧？`),
+  cue:t('His wife has been listening quietly. She is frightened and wants to hand the decision to someone else.','他的太太一直安靜地聽著。她很害怕，想把決定交給別人。'),
+  opts:[
+   o(t(`Yes, the doctor will decide what's best.`,`對，醫生會決定什麼對他最好。`),t('Hands the decision away','把決定交出去'),[-6,4,-6],{},'weak',t('It relieves her for a moment, but it takes the choice away from Mr Rahman, who was just telling you clearly what he wants.','這讓她一時鬆了口氣，卻把選擇權從 Rahman 先生手上拿走，而他剛剛才清楚說出自己想要什麼。')),
+   o(t(`Mr Rahman, your wife is upset. Maybe we should talk about this another time.`,`Rahman 先生，你太太很難過。也許我們改天再談這個。`),t('Ends the conversation','中止對話'),[-8,8,-4],{},'weak',t('It protects the moment but closes down a hard, important conversation just as it opened up.','這保護了當下，卻在一場困難而重要的對話剛剛打開時就把它關上。')),
+   o(t(`It's frightening to even think about, and it makes sense that you'd want someone else to carry it. Your husband's voice matters most here, and the doctor will give advice but shouldn't decide alone. Could we talk together about what he would want, and what worries you most?`,`光是想到就很可怕，你希望有人替你承擔，這很可以理解。這件事上，你先生的意願最重要，醫生會提供意見，但不應該單獨決定。我們可以一起談談他想要什麼，以及你最擔心的是什麼嗎？`),t('Includes her, keeps his voice central','納入太太，並保持他的主導'),[10,-6,6],{family:2,empathy:2,values:1},'strong',t('You acknowledged her fear without taking the decision away from him, and made space for both of them.','你承認了她的恐懼，又沒有把決定從他手上拿走，同時為兩人騰出空間。'))
+  ]},
+ {npc:t(`So what happens now? I don't want to sign anything today.`,`那接下來會怎樣？我今天不想簽任何東西。`),
+  cue:t('Mr Rahman is guarded and wants to stay in control of the pace.','Rahman 先生有些戒備，想掌握節奏。'),
+  opts:[
+   o(t(`You don't have to sign anything today. I'll ask the doctor and our palliative care team to sit down with you and your wife when you feel ready. I'll also write up a plan for the breathless nights so you know what to do and who to call. Does that sound right?`,`你今天不用簽任何東西。等你準備好，我會請醫生和我們的紓緩護理團隊與你和太太坐下來談。我也會為夜裡喘不過氣的情況寫一份計劃，讓你知道該怎麼做、打給誰。這樣可以嗎？`),t('Puts him in control, gives a practical plan','讓他掌握主導，並提供實際計劃'),[12,-8,8],{info:2,family:1,values:1,empathy:1},'strong',t('You gave him the pace, a practical plan for his fear, and a clear way forward, and you checked that it fits.','你把節奏交還給他，為他的恐懼提供實際計劃和清晰的方向，並確認這樣是否合適。')),
+   o(t(`We'll see how things go.`,`看情況再說吧。`),t('Vague','含糊其辭'),[-6,4,-4],{},'weak',t('He asked what happens next. A vague answer leaves the fear in charge.','他問接下來會怎樣。含糊的回答只會讓恐懼繼續作主。')),
+   o(t(`It would really help if you signed the advance care planning form before you go home.`,`如果你出院前簽好預設照護計劃表格，會很有幫助。`),t('Pushes the form','催促簽表格'),[-10,8,-2],{},'weak',t('He told you he doesn\'t want to sign today. The form is not the conversation.','他已說明今天不想簽。表格不等於對話。'))
+  ]}
+ ]
+}};
+const CASE_ORDER=['stroke','copd'];
+
+/* ---------- state ---------- */
+let S={lang:'en',screen:'home',caseId:null,turn:0,phase:'choose',vals:null,hist:[],picks:[],ack:false,remember:false};
+const DIS_KEY='gentle-truths-disclaimer-ack';
+try{S.ack=sessionStorage.getItem(DIS_KEY)==='1';}catch(e){}
+const L=x=>{if(typeof x==='string')return x;const g=S.lang;return g==='zh-Hant'?x.zh:g==='zh-Hans'?simp(x.zh):(x[g]||x.en);};
+const tx=k=>{const v=UI[S.lang][k];return v===undefined?UI.en[k]:v;};
+const $=(s,r)=> (r||document).querySelector(s);
+
+/* ---------- colour and mood ---------- */
+function tempColor(d){const a=[79,179,160],b=[226,81,106],k=d/100;return 'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*k)).join(',')+')';}
+function breath(d){return (1.7+(100-d)/100*2.6).toFixed(2)+'s';}
+function tempWord(d){return d>=80?tx('tw4'):d>=60?tx('tw3'):d>=40?tx('tw2'):d>=22?tx('tw1'):tx('tw0');}
+const signed=v=>(v>0?'+':'\u2212')+Math.abs(v);
+
+/* ---------- pieces ---------- */
+const LANTERN='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 3h6M12 3v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/><rect x="6.5" y="5" width="11" height="14" rx="4.6" fill="#F0A92E"/><path d="M9.5 21h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg>';
+function avatar(id,init,d,still){return '<div class="avatar'+(still?' still':'')+'" '+(id?'id="'+id+'"':'')+' style="--halo:'+tempColor(d)+';--breath:'+breath(d)+'"><span class="halo"></span><span class="halo h2"></span><div class="face">'+esc(init)+'</div></div>';}
+
+function langBtns(){return LANGS.map(([v,lab,name])=>'<button data-act="lang" data-v="'+v+'" lang="'+v+'" title="'+esc(name)+'" aria-label="'+esc(name)+'" aria-pressed="'+(S.lang===v)+'">'+esc(lab)+'</button>').join('');}
+function header(){
+  const inSim=S.screen==='sim';
+  const nav=inSim?'<div class="nav"><button class="btn ghost sm" data-act="leave" style="color:var(--ink)">'+esc(tx('leave'))+'</button></div>'
+   :'<nav class="nav" aria-label="Main">'+
+    '<button data-act="home" class="'+(S.screen==='home'?'on':'')+'">'+esc(tx('nav_cases'))+'</button>'+
+    '<button data-act="edu" class="'+(S.screen==='edu'?'on':'')+'">'+esc(tx('nav_edu'))+'</button>'+
+    '<button data-act="safe" class="'+(S.screen==='safe'?'on':'')+'">'+esc(tx('nav_safe'))+'</button>'+
+    '<button data-act="credits" class="'+(S.screen==='credits'?'on':'')+'">'+esc(tx('nav_credits'))+'</button></nav>';
+  return '<header class="top" id="top"><div class="wrap top-in">'+
+   '<button class="brand" data-act="home" aria-label="Gentle Truths">'+LANTERN+'<span>Gentle Truths</span></button>'+nav+
+   '<div class="seg" role="group" aria-label="Language">'+
+   langBtns()+'</div></div></header>';
+}
+
+/* ---------- home ---------- */
+const DEMO=[
+ {who:t('Jenny','Jenny'),txt:t(`"Can someone please just tell me what is happening to my mum?"`,`「可不可以有人直接告訴我，我媽媽到底怎麼了？」`),d:88},
+ {who:t('You','你'),txt:t(`"You've been carrying so much. What have you understood so far?"`,`「你一直扛著這麼多。到目前為止，你了解到什麼？」`),d:64},
+ {who:t('Jenny','Jenny'),txt:t(`"They keep saying 'guarded'. I don't know what that means."`,`「他們一直說『保守』，我不知道那是什麼意思。」`),d:56},
+ {who:t('You','你'),txt:t(`"It means we are worried. Let me explain, step by step."`,`「意思是我們很擔心。讓我一步一步解釋。」`),d:32}
+];
+function homeView(){
+  const cases=CASE_ORDER.map(id=>{const c=CASES[id];return '<article class="case">'+avatar('',c.npc.init,c.start.distress,true)+
+   '<div><h3>'+esc(L(c.title))+'</h3><p>'+esc(L(c.teaser))+'</p>'+
+   '<div class="meta"><span>'+esc(L(c.setting))+'</span><span>'+esc(tx('dur'))+'</span><span>'+esc(tx('ex'))+'</span></div>'+
+   '<button class="btn" data-act="start" data-case="'+id+'">'+esc(tx('start'))+'</button></div></article>';}).join('');
+  return '<main class="wrap"><section class="hero"><div><h1>'+esc(tx('h1'))+'</h1><p class="lede">'+esc(tx('lede'))+'</p>'+
+   '<div class="cta-row"><button class="btn" data-act="cases">'+esc(tx('cta'))+'</button><button class="btn ghost" data-act="edu">'+esc(tx('cta2'))+'</button></div>'+
+   '<p class="fine">'+esc(tx('fine'))+'</p></div>'+
+   '<div class="demo" aria-hidden="true">'+avatar('demoAv','J',88,false)+'<p class="dwho" id="demoWho"></p><p class="dtxt" id="demoTxt"></p><p class="dtm" id="demoTm"></p></div></section>'+
+   '<section id="cases"><h2 class="sec-h">'+esc(tx('cases_h'))+'</h2><div class="cases">'+cases+'</div></section>'+
+   '<section class="why"><h2 class="sec-h">'+esc(tx('why_h'))+'</h2><dl>'+
+   [1,2,3].map(n=>'<div><dt>'+esc(tx('why'+n+'_t'))+'</dt><dd>'+esc(tx('why'+n+'_d'))+'</dd></div>').join('')+'</dl></section>'+
+   '<footer class="foot">'+esc(tx('foot'))+'</footer></main>';
+}
+function runDemo(){
+  const av=$('#demoAv');if(!av)return;
+  let k=0;
+  const who=$('#demoWho'),txt=$('#demoTxt'),tm=$('#demoTm');
+  const show=()=>{const s=DEMO[k];
+    av.style.setProperty('--halo',tempColor(s.d));av.style.setProperty('--breath',breath(s.d));
+    const set=()=>{who.textContent=L(s.who);txt.textContent=L(s.txt);tm.textContent=tx('temp_l')+': '+tempWord(s.d);txt.style.opacity=1;};
+    if(reduce){set();}else{txt.style.opacity=0;setTimeout(set,220);}
+  };
+  show();
+  if(!reduce){demoTimer=setInterval(()=>{k=(k+1)%DEMO.length;show();},3800);}
+}
+
+/* ---------- simulation ---------- */
+function simView(c){
+  const v=S.vals;
+  return '<main class="wrap sim" id="sim"><aside class="room" id="room" aria-label="'+esc(tx('temp_l'))+'">'+
+   avatar('av',c.npc.init,v.distress,false)+
+   '<div><div class="who"><b id="whoName"></b><span id="whoRole"></span></div><div class="tw" id="tw"></div>'+
+   '<div class="meters">'+
+   meter('trust','tr',v.trust)+meter('understand','un',v.understand)+meter('distress','te',v.distress)+'</div>'+
+   '<div class="spark" id="spark"></div><p class="hint">'+esc(tx('calmer'))+'</p></div></aside>'+
+   '<section class="convo" id="convo" aria-live="polite"></section></main>';
+}
+function meter(key,cls,val){
+  const label=key==='distress'?tx('tension'):tx(key);
+  return '<div class="m"><span>'+esc(label)+'</span><div class="bar"><i class="'+cls+'" id="b-'+key+'" style="width:'+val+'%"></i></div><span class="val" id="n-'+key+'">'+val+'</span></div>';
+}
+function sparkSvg(h){
+  const W=280,H=70,n=Math.max(h.length,2),x=i=>8+(W-16)*i/(n-1),y=v=>H-6-(H-12)*v/100;
+  const line=(k,col)=>'<polyline fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" points="'+h.map((p,i)=>x(i).toFixed(1)+','+y(p[k]).toFixed(1)).join(' ')+'"/>'+
+    h.map((p,i)=>'<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p[k]).toFixed(1)+'" r="'+(i===h.length-1?4:2.4)+'" fill="'+col+'"/>').join('');
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(tx('flow_h'))+'"><line x1="8" x2="'+(W-8)+'" y1="'+y(50)+'" y2="'+y(50)+'" stroke="var(--line)" stroke-dasharray="3 4"/>'+line('trust','var(--trust)')+line('distress','var(--tension)')+'</svg>';
+}
+function curSpeaker(c){
+  if(S.phase==='end')return c.npc;
+  const tn=c.turns[S.turn];return tn.speaker||c.npc;
+}
+function updateRoom(){
+  const c=CASES[S.caseId];if(!c||!$('#room'))return;
+  const v=S.vals,sp=curSpeaker(c);
+  [['trust','trust'],['understand','understand'],['distress','distress']].forEach(([k,id])=>{
+    const b=$('#b-'+id),n=$('#n-'+id);if(b)b.style.width=v[k]+'%';if(n)n.textContent=v[k];});
+  const av=$('#av');
+  av.style.setProperty('--halo',tempColor(v.distress));av.style.setProperty('--breath',breath(v.distress));
+  $('#av .face').textContent=sp.init;
+  $('#whoName').textContent=L(sp.name);$('#whoRole').textContent=L(sp.role);
+  $('#tw').textContent=tx('temp_l')+': '+tempWord(v.distress);
+  $('#spark').innerHTML=sparkSvg(S.hist);
+}
+function chips(fx){
+  const items=[['trust',fx[0],true],['tension',fx[1],false],['understand',fx[2],true]];
+  return items.filter(i=>i[1]!==0).map(([k,v,up])=>'<span class="chip '+((up?v>0:v<0)?'g':'bad')+'">'+signed(v)+' '+esc(tx(k))+'</span>').join('');
+}
+function npcBubble(c,i,fresh){
+  const tn=c.turns[i],sp=tn.speaker||c.npc;
+  return '<article class="b npc'+(fresh?' fresh" id="anchor':'')+'"><div class="sp">'+esc(L(sp.name))+'<span>'+esc(L(sp.role))+'</span></div>'+
+   '<p class="say">'+esc(L(tn.npc))+'</p><p class="notice"><b>'+esc(tx('notice'))+'</b> '+esc(L(tn.cue))+'</p></article>';
+}
+function youBubble(op){return '<article class="b you"><p class="say">'+esc(L(op.say))+'</p></article>';}
+function coach(op,fresh){
+  return '<aside class="coach '+op.q+(fresh?' fresh" id="anchor':'')+'"><div class="ct"><span class="pill">'+esc(op.q==='strong'?tx('pill_s'):tx('pill_w'))+'</span><span class="tag">'+esc(L(op.tag))+'</span></div>'+
+   '<p>'+esc(L(op.fb))+'</p><div class="chips">'+chips(op.fx)+'</div></aside>';
+}
+function renderConvo(scroll){
+  const c=CASES[S.caseId],host=$('#convo');if(!host)return;
+  let h='<div class="scene"><h2>'+esc(L(c.title))+'</h2><p>'+esc(L(c.setting))+'</p><p>'+esc(L(c.intro))+'</p><p class="cn">'+esc(tx('scene_note'))+'</p>'+(tx('case_en_only')?'<p class="cn">'+esc(tx('case_en_only'))+'</p>':'')+'</div>';
+  for(let i=0;i<=S.turn;i++){
+    const tn=c.turns[i],cur=i===S.turn,showYou=!cur||S.phase!=='choose';
+    h+=npcBubble(c,i,cur&&S.phase==='choose'&&scroll);
+    if(showYou){const op=tn.opts[S.picks[i]];h+=youBubble(op)+coach(op,cur&&S.phase==='fb'&&scroll);}
+  }
+  if(S.phase==='choose'){
+    h+='<p class="ch-h">'+esc(tx('choose_h'))+'</p><div class="choices">'+c.turns[S.turn].opts.map((op,i)=>'<button class="choice" data-act="choose" data-i="'+i+'">'+esc(L(op.say))+'</button>').join('')+'</div>';
+  }else if(S.phase==='fb'){
+    const last=S.turn===c.turns.length-1;
+    h+='<div class="endrow"><button class="btn" data-act="next">'+esc(last?tx('finish'):tx('cont'))+'</button></div>';
+  }else{
+    h+='<article class="b npc fresh" id="anchor"><div class="sp">'+esc(L(c.npc.name))+'<span>'+esc(L(c.npc.role))+'</span></div><p class="say">'+esc(L(endLine(c)))+'</p></article>'+
+       '<div class="endrow"><button class="btn" data-act="debrief">'+esc(tx('debrief_btn'))+'</button></div>';
+  }
+  host.innerHTML=h;
+  if(scroll){const a=$('#anchor');if(a)a.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});}
+}
+function endLine(c){const tr=S.vals.trust;return tr>=75?c.ends.hi:tr>=45?c.ends.mid:c.ends.lo;}
+function startCase(id){
+  const c=CASES[id];S.caseId=id;S.turn=0;S.phase='choose';S.vals={...c.start};S.hist=[{...c.start}];S.picks=[];S.screen='sim';
+  render();window.scrollTo(0,0);
+}
+function choose(i){
+  if(S.phase!=='choose')return;
+  const c=CASES[S.caseId],op=c.turns[S.turn].opts[i],v=S.vals;
+  S.picks[S.turn]=i;v.trust=cl(v.trust+op.fx[0]);v.distress=cl(v.distress+op.fx[1]);v.understand=cl(v.understand+op.fx[2]);
+  S.hist.push({...v});S.phase='fb';renderConvo(true);updateRoom();
+}
+function next(){
+  if(S.phase!=='fb')return;
+  const c=CASES[S.caseId];
+  if(S.turn<c.turns.length-1){S.turn++;S.phase='choose';}else{S.phase='end';}
+  renderConvo(true);updateRoom();
+}
+
+/* ---------- debrief ---------- */
+function computeSkills(c){
+  const earned={},max={};SK.forEach(k=>{earned[k]=0;max[k]=0;});
+  c.turns.forEach((tn,i)=>{SK.forEach(k=>{max[k]+=Math.max(...tn.opts.map(op=>op.sk[k]||0));earned[k]+=(tn.opts[S.picks[i]].sk[k]||0);});});
+  const pct={};let te=0,tm=0;
+  SK.forEach(k=>{pct[k]=max[k]?Math.round(100*earned[k]/max[k]):0;te+=earned[k];tm+=max[k];});
+  return {pct,overall:tm?Math.round(100*te/tm):0};
+}
+function radarSvg(pct){
+  const cx=160,cy=140,R=92,n=SK.length;
+  const pt=(i,r)=>{const a=-Math.PI/2+2*Math.PI*i/n;return [cx+r*Math.cos(a),cy+r*Math.sin(a)];};
+  const ring=f=>'<polygon fill="none" stroke="var(--line)" points="'+SK.map((_,i)=>pt(i,R*f).map(v=>v.toFixed(1)).join(',')).join(' ')+'"/>';
+  const axes=SK.map((_,i)=>{const p=pt(i,R);return '<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0].toFixed(1)+'" y2="'+p[1].toFixed(1)+'" stroke="var(--line)"/>';}).join('');
+  const poly=SK.map((k,i)=>pt(i,R*Math.max(pct[k],4)/100).map(v=>v.toFixed(1)).join(',')).join(' ');
+  const dots=SK.map((k,i)=>{const p=pt(i,R*Math.max(pct[k],4)/100);return '<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3.5" fill="var(--trust)"/>';}).join('');
+  const labels=SK.map((k,i)=>{const p=pt(i,R+20),anc=p[0]<cx-8?'end':p[0]>cx+8?'start':'middle';
+    return '<text x="'+p[0].toFixed(1)+'" y="'+(p[1]+4).toFixed(1)+'" text-anchor="'+anc+'" font-size="12.5" font-family="var(--sans)" fill="var(--ink)">'+esc(tx('sk_'+k))+' '+pct[k]+'</text>';}).join('');
+  return '<svg viewBox="0 0 320 280" role="img" aria-label="'+esc(tx('skills_h'))+'">'+ring(.25)+ring(.5)+ring(.75)+ring(1)+axes+
+   '<polygon points="'+poly+'" fill="var(--trust)" fill-opacity=".22" stroke="var(--trust)" stroke-width="2.5" stroke-linejoin="round"/>'+dots+labels+'</svg>';
+}
+function flowSvg(h){
+  const W=360,H=190,L0=34,R0=12,T0=12,B0=34,n=h.length;
+  const x=i=>L0+(W-L0-R0)*i/(n-1),y=v=>T0+(H-T0-B0)*(1-v/100);
+  const grid=[0,50,100].map(v=>'<line x1="'+L0+'" x2="'+(W-R0)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="var(--line)"'+(v===50?' stroke-dasharray="3 4"':'')+'/><text x="'+(L0-8)+'" y="'+(y(v)+4)+'" text-anchor="end" font-size="11" fill="var(--ink2)" font-family="var(--sans)">'+v+'</text>').join('');
+  const xl=h.map((_,i)=>'<text x="'+x(i)+'" y="'+(H-10)+'" text-anchor="middle" font-size="11.5" fill="var(--ink2)" font-family="var(--sans)">'+(i===0?esc(tx('startlbl')):i)+'</text>').join('');
+  const line=(k,col)=>'<polyline fill="none" stroke="'+col+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="'+h.map((p,i)=>x(i).toFixed(1)+','+y(p[k]).toFixed(1)).join(' ')+'"/>'+h.map((p,i)=>'<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p[k]).toFixed(1)+'" r="4" fill="'+col+'"/>').join('');
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(tx('flow_h'))+'">'+grid+xl+line('understand','var(--understand)')+line('trust','var(--trust)')+line('distress','var(--tension)')+'</svg>';
+}
+function debriefView(){
+  const c=CASES[S.caseId],sc=computeSkills(c);
+  const moments=c.turns.map((tn,i)=>{const op=tn.opts[S.picks[i]],best=tn.opts.find(x=>x.q==='strong');
+    return '<article class="mo '+op.q+'"><p class="lab">'+esc(tx('youSaid'))+'</p><p class="q">'+esc(L(op.say))+'</p><p class="why2"><b>'+esc(L(op.tag))+'.</b> '+esc(L(op.fb))+'</p>'+
+     (op.q!=='strong'?'<p class="lab">'+esc(tx('stronger'))+'</p><p class="q">'+esc(L(best.say))+'</p>':'')+'</article>';}).join('');
+  return '<main class="wrap deb"><h2>'+esc(tx('deb_h'))+'</h2><p style="color:var(--ink2)">'+esc(L(c.title))+'</p>'+
+   '<div class="deb-top"><div class="scorebox"><div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--surface2)" stroke-width="10"/><circle id="ringArc" cx="60" cy="60" r="52" fill="none" stroke="var(--amber)" stroke-width="10" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset 1.1s cubic-bezier(.2,.7,.2,1)"/></svg><div class="num" id="ringNum">0</div><div class="lbl">'+esc(tx('overall'))+'</div></div>'+
+   '<p class="endquote"><small>'+esc(tx('ended'))+'</small>'+esc(L(endLine(c)))+'</p></div></div>'+
+   '<div class="charts"><div><h3>'+esc(tx('skills_h'))+'</h3>'+radarSvg(sc.pct)+'</div>'+
+   '<div><h3>'+esc(tx('flow_h'))+'</h3>'+flowSvg(S.hist)+'<div class="legend"><span><i style="background:var(--trust)"></i>'+esc(tx('trust'))+'</span><span><i style="background:var(--understand)"></i>'+esc(tx('understand'))+'</span><span><i style="background:var(--tension)"></i>'+esc(tx('tension'))+'</span></div></div></div>'+
+   '<section class="moments"><h3>'+esc(tx('moments_h'))+'</h3>'+moments+'</section>'+
+   '<div class="endrow" style="margin-top:30px"><button class="btn" data-act="retry">'+esc(tx('retry'))+'</button><button class="btn ghost" data-act="cases-home">'+esc(tx('other'))+'</button></div></main>';
+}
+function animateScore(){
+  const c=CASES[S.caseId],sc=computeSkills(c),arc=$('#ringArc'),num=$('#ringNum');if(!arc)return;
+  const off=326.7*(1-sc.overall/100);
+  if(reduce){arc.style.strokeDashoffset=off;num.textContent=sc.overall;return;}
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{arc.style.strokeDashoffset=off;}));
+  const t0=performance.now();
+  (function tick(now){const p=Math.min(1,(now-t0)/1000);num.textContent=Math.round(sc.overall*p);if(p<1)requestAnimationFrame(tick);})(t0);
+}
+
+/* ---------- educator view (synthetic) ---------- */
+const COHORT={
+ skills:{empathy:71,info:63,values:48,family:41,honesty:58},
+ wrong:[
+  {t:t(`Turn 3, "Please don't tell my mum": agreed to withhold, or cited the law`,`第 3 步「請不要告訴我媽媽」：答應隱瞞，或搬出法律`),v:57},
+  {t:t('Turn 4, feeding tube guilt: dismissed the feeling or stepped away','第 4 步餵食管的內疚：否定感受或抽身離開'),v:39},
+  {t:t('Turn 2, prognosis: offered false reassurance','第 2 步預後：給予虛假安慰'),v:31},
+  {t:t('Turn 5, next steps: added pressure or left her alone','第 5 步下一步：施加壓力或讓她獨自面對'),v:24}],
+ dist:[2,7,18,15,6]
+};
+function sampleJson(){
+  const c=CASES.stroke,tn=c.turns[0];
+  return JSON.stringify({case:c.id,speaker:L(c.npc.name),says:L(tn.npc),notice:L(tn.cue),options:tn.opts.map(x=>({say:L(x.say),moves:{trust:x.fx[0],tension:x.fx[1],understanding:x.fx[2]},skills:x.sk,quality:x.q,coaching:L(x.fb)}))},null,2);
+}
+function eduView(){
+  const sk=SK.map(k=>'<div class="hb"><span>'+esc(tx('sk_'+k))+'</span><div class="bar"><i class="un" style="width:'+COHORT.skills[k]+'%"></i></div><span class="val">'+COHORT.skills[k]+'</span></div>').join('');
+  const wr=COHORT.wrong.map(w=>'<div class="hb" style="grid-template-columns:1fr 42px"><span>'+esc(L(w.t))+'</span><span class="val">'+w.v+'%</span></div><div class="bar" style="margin:-4px 0 8px"><i class="te" style="width:'+w.v+'%"></i></div>').join('');
+  const mx=Math.max(...COHORT.dist),bins=['0-20','20-40','40-60','60-80','80-100'];
+  const hist='<div class="hist">'+COHORT.dist.map(v=>'<div style="height:'+Math.round(v/mx*100)+'%"><b>'+v+'</b></div>').join('')+'</div><div class="hlabels">'+bins.map(b=>'<span>'+b+'</span>').join('')+'</div>';
+  return '<main class="wrap page"><h2>'+esc(tx('edu_h'))+'</h2><p class="sub">'+esc(tx('edu_note'))+'</p>'+
+   '<div class="edu-grid"><section><h3>'+esc(tx('edu_skills'))+'</h3>'+sk+'</section><section><h3>'+esc(tx('edu_dist'))+'</h3>'+hist+'</section>'+
+   '<section class="full"><h3>'+esc(tx('edu_wrong'))+'</h3><div style="max-width:40rem">'+wr+'</div></section>'+
+   '<section class="full"><h3>'+esc(tx('edu_data_h'))+'</h3><p style="max-width:40em;color:var(--ink2)">'+esc(tx('edu_data_p'))+'</p><pre class="code" tabindex="0">'+esc(sampleJson())+'</pre></section></div></main>';
+}
+
+/* ---------- safeguards ---------- */
+function safeView(){
+  const items=[1,2,3,4,5,6].map(n=>'<div><dt>'+esc(tx('s'+n+'_t'))+'</dt><dd>'+esc(tx('s'+n+'_d'))+(n===5?'<div class="review">'+esc(tx('s5_r'))+'</div>':'')+'</dd></div>').join('');
+  return '<main class="wrap page"><h2>'+esc(tx('safe_h'))+'</h2><dl class="safe-list">'+items+'</dl><p class="strongline">'+esc(tx('s_edu'))+'</p></main>';
+}
+
+/* ---------- credits, terms, disclaimer, footer ---------- */
+function creditsView(){
+  const p=(n,name)=>'<article><h3>'+esc(name)+'</h3><p class="ttl">'+esc(tx('cr'+n+'_title'))+'</p><p class="aff">'+esc(tx('cr'+n+'_aff1'))+'<br>'+esc(tx('cr'+n+'_aff2'))+'</p></article>';
+  return '<main class="wrap page"><h2>'+esc(tx('credits_h'))+'</h2><div class="cred" style="margin-top:22px">'+p(1,'Kamala Devi')+p(2,'Dr Peter CY Yau')+'</div></main>';
+}
+function termsView(){
+  const body=[1,2,3,4,5,6,7,8,9].map(n=>'<h3>'+esc(tx('t'+n+'_t'))+'</h3><p>'+esc(tx('t'+n+'_d'))+'</p>').join('');
+  return '<main class="wrap page terms"><p class="eyebrow">'+esc(tx('terms_eyebrow'))+'</p><h2>'+esc(tx('terms_h1'))+'<br>'+esc(tx('terms_h2'))+'</h2><p class="upd">'+esc(tx('terms_updated'))+'</p>'+
+   (tx('terms_notice')?'<p class="terms-notice">'+esc(tx('terms_notice'))+'</p>':'')+'<div class="terms-body">'+body+'</div></main>';
+}
+function siteFoot(){
+  return '<div class="wrap"><div class="sitefoot"><span>Gentle Truths</span><button data-act="terms">'+esc(tx('foot_terms'))+'</button></div></div>';
+}
+function disclaimer(){
+  return '<div class="dis-overlay" id="dis"><div class="dis" role="dialog" aria-modal="true" aria-labelledby="dis-t">'+
+   '<div class="seg" role="group" aria-label="Language">'+langBtns()+'</div>'+
+   '<h2 id="dis-t">'+esc(tx('dis_title'))+'</h2><ul>'+[1,2,3,4].map(n=>'<li>'+esc(tx('dis_p'+n))+'</li>').join('')+'</ul>'+
+   '<label class="rem"><input type="checkbox" data-act="remember"'+(S.remember?' checked':'')+'>'+esc(tx('dis_remember'))+'</label>'+
+   '<div class="dis-act"><button class="btn no" data-act="dis-no">'+esc(tx('dis_disagree'))+'</button><button class="btn" id="disYes" data-act="dis-yes">'+esc(tx('dis_agree'))+'</button></div></div></div>';
+}
+
+/* ---------- router ---------- */
+function syncHdr(){const h=$('#top');if(h)document.documentElement.style.setProperty('--hdr',h.offsetHeight+'px');}
+function render(){
+  clearInterval(demoTimer);
+  document.documentElement.lang=S.lang;
+  const app=$('#app');let view='';
+  if(S.screen==='home')view=homeView();
+  else if(S.screen==='sim')view=simView(CASES[S.caseId]);
+  else if(S.screen==='debrief')view=debriefView();
+  else if(S.screen==='edu')view=eduView();
+  else if(S.screen==='credits')view=creditsView();
+  else if(S.screen==='terms')view=termsView();
+  else view=safeView();
+  app.innerHTML=header()+view+(S.screen==='sim'?'':siteFoot());
+  const old=$('#dis');if(old)old.remove();
+  app.inert=!S.ack;document.body.style.overflow=S.ack?'':'hidden';
+  if(!S.ack){document.body.insertAdjacentHTML('beforeend',disclaimer());const y=$('#disYes');if(y)y.focus();}
+  syncHdr();
+  if(S.screen==='home')runDemo();
+  if(S.screen==='sim'){renderConvo(false);updateRoom();}
+  if(S.screen==='debrief')animateScore();
+}
+function go(screen){S.screen=screen;render();window.scrollTo(0,0);}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act;
+  if(a==='lang'){S.lang=b.dataset.v;render();}
+  else if(a==='home'||a==='cases-home'){go('home');}
+  else if(a==='edu'){go('edu');}
+  else if(a==='safe'){go('safe');}
+  else if(a==='credits'){go('credits');}
+  else if(a==='terms'){go('terms');}
+  else if(a==='remember'){S.remember=b.checked;}
+  else if(a==='dis-yes'){if(S.remember){try{sessionStorage.setItem(DIS_KEY,'1');}catch(e){}}S.ack=true;render();}
+  else if(a==='dis-no'){window.location.href='https://www.google.com';}
+  else if(a==='cases'){const el=$('#cases');if(el)el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});}
+  else if(a==='start'){startCase(b.dataset.case);}
+  else if(a==='choose'){choose(+b.dataset.i);}
+  else if(a==='next'){next();}
+  else if(a==='debrief'){go('debrief');}
+  else if(a==='retry'){startCase(S.caseId);}
+  else if(a==='leave'){go('home');}
+});
+window.addEventListener('resize',syncHdr);
+render();
+})();
+</script>
+</body>
+</html>
